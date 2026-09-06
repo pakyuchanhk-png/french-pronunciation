@@ -1,0 +1,6 @@
+# Allow all search engines and AI crawlers to index the whole site.
+User-agent: *
+Allow: /
+
+# Once your site is live, add your sitemap here, e.g.:
+# Sitemap: https://your-domain.example/sitemap.xml

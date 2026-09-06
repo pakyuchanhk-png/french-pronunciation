@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- ===== SEO: this is what shows up in Google search results ===== -->
+  <title>French Pronunciation: Hear Every Letter &amp; Sound (Free)</title>
+  <meta name="description" content="Learn French pronunciation the easy way. Click any letter, accent, or common combination — ou, on, gn, é and more — to hear it spoken aloud. Free, instant, no signup." />
+  <meta name="keywords" content="French pronunciation, learn French pronunciation, French letters and sounds, French phonics, French accents, how to pronounce French words, French for beginners" />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#0f1220" />
+  <!-- After you put the site online, change the two URLs below to your real
+       web address (e.g. https://frenchpronunciation.com/). -->
+  <link rel="canonical" href="https://your-domain.example/" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+
+  <!-- ===== Social sharing: what shows when the link is pasted into
+       WhatsApp, Facebook, X, Discord, iMessage, etc. ===== -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="French Pronunciation — Hear Every Letter &amp; Sound" />
+  <meta property="og:description" content="Click any French letter, accent, or combination to hear it spoken aloud. Free and instant, right in your browser." />
+  <meta property="og:url" content="https://your-domain.example/" />
+  <meta property="og:locale" content="en_US" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="French Pronunciation — Hear Every Letter &amp; Sound" />
+  <meta name="twitter:description" content="Click any French letter, accent, or combination to hear it spoken aloud. Free and instant, right in your browser." />
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- ===== Structured data: helps Google AND AI assistants (ChatGPT,
+       Claude, Perplexity, Google's AI Overviews) understand the page. ===== -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "French Pronunciation",
+    "description": "A free interactive tool to hear how French letters, accents, and common letter-combinations are pronounced. Click any tile to hear the exact sound and an example word spoken aloud.",
+    "url": "https://your-domain.example/",
+    "inLanguage": "en",
+    "teaches": "French pronunciation",
+    "educationalLevel": "Beginner",
+    "learningResourceType": "Interactive tool",
+    "isAccessibleForFree": true,
+    "keywords": "French pronunciation, French letters and sounds, French phonics, French accents"
+  }
+  </script>
+
+  <!-- ==========================================================
+       GOOGLE ADSENSE (for the future)
+       When you're approved for AdSense, paste the <script> tag
+       Google gives you right here in the <head>. The boxes marked
+       "Ad space" further down are where ads will appear.
+       ========================================================== -->
+</head>
+<body>
+  <nav class="nav">
+    <a class="nav__brand" href="index.html">🇫🇷 French Pronunciation</a>
+  </nav>
+
+  <main>
+    <div class="intro">
+      <h1>Learn French Pronunciation</h1>
+      <p>Click any letter, accent, or common combination to hear exactly how it sounds in French — spoken aloud, instantly, and completely free. Built for beginners who struggle with pronunciation.</p>
+    </div>
+
+    <!-- Ad space (top) -->
+    <aside class="ad-slot" aria-hidden="true">Ad space</aside>
+
+    <!-- Shown only if the browser has no French voice installed -->
+    <div id="voiceWarning" class="warn" hidden>
+      Your device doesn't seem to have a French voice installed, so playback may
+      sound off. On Windows you can add one under
+      <strong>Settings → Time &amp; language → Language &amp; region → Add a language → French</strong>.
+    </div>
+
+    <!-- Speed control -->
+    <div class="controls">
+      <span class="label">Speed:</span>
+      <button class="pill active" data-rate="1" type="button">Normal</button>
+      <button class="pill" data-rate="0.6" type="button">Slow</button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-panel="alphabet" type="button">Alphabet</button>
+      <button class="tab" data-panel="combos" type="button">Common combinations</button>
+      <button class="tab" data-panel="accents" type="button">Accents</button>
+    </div>
+
+    <!-- Panels are filled in by the script below -->
+    <section id="alphabet" class="panel active">
+      <div class="grid grid--alphabet" id="alphabetGrid"></div>
+    </section>
+
+    <section id="combos" class="panel">
+      <div class="grid grid--combos" id="combosGrid"></div>
+    </section>
+
+    <section id="accents" class="panel">
+      <div class="grid grid--combos" id="accentsGrid"></div>
+    </section>
+
+    <!-- Ad space (bottom) -->
+    <aside class="ad-slot" aria-hidden="true">Ad space</aside>
+  </main>
+
+  <footer>
+    &copy; 2026 French Pronunciation · Built to make learning easier.
+  </footer>
+
+  <!-- ==========================================================
+       The pronunciation logic. Plain JavaScript, no libraries.
+       It uses the browser's built-in speech engine (Web Speech API).
+       ========================================================== -->
+  <script>
+    // ---- 1. The content. Edit these lists to add or change tiles. ----
+
+    // Alphabet: letter + how its NAME sounds in French (IPA) + a rough English hint.
+    const ALPHABET = [
+      ["A", "/a/", "ah"], ["B", "/be/", "bay"], ["C", "/se/", "say"],
+      ["D", "/de/", "day"], ["E", "/ə/", "uh"], ["F", "/ɛf/", "eff"],
+      ["G", "/ʒe/", "zhay"], ["H", "/aʃ/", "ash"], ["I", "/i/", "ee"],
+      ["J", "/ʒi/", "zhee"], ["K", "/ka/", "kah"], ["L", "/ɛl/", "ell"],
+      ["M", "/ɛm/", "em"], ["N", "/ɛn/", "en"], ["O", "/o/", "oh"],
+      ["P", "/pe/", "pay"], ["Q", "/ky/", "koo (tight)"], ["R", "/ɛʁ/", "air (throaty)"],
+      ["S", "/ɛs/", "ess"], ["T", "/te/", "tay"], ["U", "/y/", "ew (tight)"],
+      ["V", "/ve/", "vay"], ["W", "/dublə ve/", "doo-bluh-vay"], ["X", "/iks/", "eeks"],
+      ["Y", "/iɡʁɛk/", "ee-grek"], ["Z", "/zɛd/", "zed"]
+    ];
+
+    // Combinations: [ what you see, the ISOLATED SOUND to speak, IPA, English hint, example word ]
+    // The "sound" is the sound on its own. For consonants we add a light "e"
+    // (che, gne, que...) because a consonant can't really be said with no vowel.
+    const COMBOS = [
+      ["ou", "ou", "/u/", "oo, as in 'food'", "bonjour"],
+      ["oi", "oi", "/wa/", "wah", "moi"],
+      ["au / eau", "au", "/o/", "oh", "bateau"],
+      ["ai / ei", "ai", "/ɛ/", "eh, as in 'bed'", "maison"],
+      ["eu", "eu", "/ø/", "uh, lips rounded", "deux"],
+      ["on / om", "on", "/ɔ̃/", "nasal 'ong'", "nom"],
+      ["an / en", "an", "/ɑ̃/", "nasal 'ahn'", "enfant"],
+      ["in / ain", "ain", "/ɛ̃/", "nasal 'ang'", "pain"],
+      ["un", "un", "/œ̃/", "nasal 'uhn'", "un"],
+      ["ch", "che", "/ʃ/", "sh", "chat"],
+      ["gn", "gne", "/ɲ/", "ny, as in 'canyon'", "montagne"],
+      ["qu", "que", "/k/", "k", "quatre"],
+      ["ph", "phe", "/f/", "f", "photo"],
+      ["ç", "ça", "/s/", "s", "français"],
+      ["ille", "ille", "/ij/", "ee-y", "fille"],
+      ["gu", "gue", "/ɡ/", "hard g", "guitare"],
+      ["-er", "er", "/e/", "ay (at word end)", "parler"],
+      ["-ez", "ez", "/e/", "ay (at word end)", "nez"]
+    ];
+
+    // Accents: [ shown, isolated sound, IPA, hint, example word ]
+    const ACCENTS = [
+      ["é", "é", "/e/", "ay — accent aigu", "café"],
+      ["è", "è", "/ɛ/", "eh — accent grave", "père"],
+      ["ê", "ê", "/ɛ/", "eh — circonflexe", "être"],
+      ["à", "à", "/a/", "ah — changes meaning", "là"],
+      ["ô", "ô", "/o/", "oh — circonflexe", "hôtel"],
+      ["ç", "ça", "/s/", "s — cédille", "garçon"]
+    ];
+
+    // ---- 2. Speech engine setup ----
+    let currentRate = 1;
+    let frVoice = null;
+
+    function pickVoice() {
+      const voices = window.speechSynthesis ? speechSynthesis.getVoices() : [];
+      frVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith("fr")) || null;
+      // Warn only after voices have actually loaded and none are French.
+      if (voices.length && !frVoice) {
+        document.getElementById("voiceWarning").hidden = false;
+      }
+    }
+
+    if ("speechSynthesis" in window) {
+      speechSynthesis.onvoiceschanged = pickVoice;
+      pickVoice();
+    } else {
+      document.getElementById("voiceWarning").hidden = false;
+      document.getElementById("voiceWarning").textContent =
+        "Your browser doesn't support speech playback. Try Chrome, Edge, or Safari.";
+    }
+
+    let lastTile = null;
+    function speak(text, tileEl) {
+      if (!("speechSynthesis" in window)) return;
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = "fr-FR";
+      if (frVoice) u.voice = frVoice;
+      u.rate = currentRate;
+
+      // Highlight the tile while it's speaking.
+      if (lastTile) lastTile.classList.remove("speaking");
+      if (tileEl) {
+        tileEl.classList.add("speaking");
+        lastTile = tileEl;
+        u.onend = () => tileEl.classList.remove("speaking");
+      }
+      speechSynthesis.speak(u);
+    }
+
+    // ---- 3. Build the tiles ----
+    function makeAlphabet() {
+      const grid = document.getElementById("alphabetGrid");
+      ALPHABET.forEach(([letter, ipa, hint]) => {
+        const b = document.createElement("button");
+        b.className = "tile";
+        b.type = "button";
+        b.innerHTML =
+          '<div class="tile__row"><span class="tile__grapheme">' + letter +
+          '</span><span class="tile__spk">🔊</span></div>' +
+          '<span class="tile__ipa">' + ipa + '</span>' +
+          '<span class="tile__hint">' + hint + '</span>';
+        // Speak the letter's NAME in French.
+        b.addEventListener("click", () => speak(letter, b));
+        grid.appendChild(b);
+      });
+    }
+
+    function makeCombos(list, gridId) {
+      const grid = document.getElementById(gridId);
+      list.forEach(([shown, sound, ipa, hint, example]) => {
+        // Use a plain <div> so we can put two real buttons inside it.
+        const tile = document.createElement("div");
+        tile.className = "tile";
+        tile.innerHTML =
+          '<span class="tile__grapheme">' + shown + '</span>' +
+          '<span class="tile__ipa">' + ipa + '</span>' +
+          '<span class="tile__hint">' + hint + '</span>' +
+          '<div class="tile__actions">' +
+            '<button class="chip chip--sound" type="button">' +
+              '<span class="play">▶</span> sound</button>' +
+            '<button class="chip chip--example" type="button">' +
+              '<span class="play">▶</span> ' + example + '</button>' +
+          '</div>';
+
+        // Two separate buttons: the isolated sound, and the example word.
+        const soundBtn = tile.querySelector(".chip--sound");
+        const exampleBtn = tile.querySelector(".chip--example");
+        soundBtn.addEventListener("click", () => speak(sound, tile));
+        exampleBtn.addEventListener("click", () => speak(example, tile));
+
+        grid.appendChild(tile);
+      });
+    }
+
+    makeAlphabet();
+    makeCombos(COMBOS, "combosGrid");
+    makeCombos(ACCENTS, "accentsGrid");
+
+    // ---- 4. Tabs ----
+    document.querySelectorAll(".tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+        document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+        tab.classList.add("active");
+        document.getElementById(tab.dataset.panel).classList.add("active");
+      });
+    });
+
+    // ---- 5. Speed buttons ----
+    document.querySelectorAll(".pill").forEach(pill => {
+      pill.addEventListener("click", () => {
+        document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+        pill.classList.add("active");
+        currentRate = parseFloat(pill.dataset.rate);
+      });
+    });
+  </script>
+</body>
+</html>
