@@ -1,0 +1,39 @@
+# French Pronounce
+
+> A free interactive web tool to hear how French letters, accents, and common
+> letter-combinations are pronounced. Click any tile to hear the exact sound and
+> an example word spoken aloud in French. Built for beginners. No signup, no cost.
+
+Site: https://frenchpronounce.com/
+
+## What it covers
+- The French alphabet (A–Z), each letter's name and pronunciation
+- Common letter-combinations that trip up learners
+- Accented letters: é, è, ê, à, ô, ç
+
+## Key pronunciations (grapheme → sound → example)
+- ou → /u/ ("oo" as in food) → bonjour
+- oi → /wa/ ("wah") → moi
+- au / eau → /o/ ("oh") → bateau
+- ai / ei → /ɛ/ ("eh") → maison
+- eu → /ø/ ("uh", rounded lips) → deux
+- on / om → /ɔ̃/ (nasal "ong") → nom
+- an / en → /ɑ̃/ (nasal "ahn") → enfant
+- in / ain → /ɛ̃/ (nasal "ang") → pain
+- un → /œ̃/ (nasal "uhn") → un
+- ch → /ʃ/ ("sh") → chat
+- gn → /ɲ/ ("ny" as in canyon) → montagne
+- qu → /k/ → quatre
+- ph → /f/ → photo
+- ç → /s/ → français
+- ille → /ij/ ("ee-y") → fille
+- gu → /ɡ/ (hard g) → guitare
+- é → /e/ ("ay", accent aigu) → café
+- è → /ɛ/ ("eh", accent grave) → père
+- ê → /ɛ/ ("eh", circonflexe) → être
+
+## Notes
+- The French "r" (/ʁ/) is pronounced at the back of the throat, not with the tongue tip.
+- French has four nasal vowels: on, an, in, un.
+- Many final consonants in French are silent.
+- Audio uses the browser's built-in French text-to-speech voice.

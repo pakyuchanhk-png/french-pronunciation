@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <!-- ===== SEO: this is what shows up in Google search results ===== -->
   <title>French Pronunciation: Hear Every Letter &amp; Sound (Free)</title>
   <meta name="description" content="Learn French pronunciation the easy way. Click any letter, accent, or common combination — ou, on, gn, é and more — to hear it spoken aloud. Free, instant, no signup." />
@@ -12,9 +13,9 @@
   <link rel="canonical" href="https://frenchpronounce.com/" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 
-  <!-- ===== Social sharing: what shows when the link is pasted into
-       WhatsApp, Facebook, X, Discord, iMessage, etc. ===== -->
+  <!-- ===== Social sharing (Open Graph + Twitter) ===== -->
   <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="French Pronounce" />
   <meta property="og:title" content="French Pronunciation — Hear Every Letter &amp; Sound" />
   <meta property="og:description" content="Click any French letter, accent, or combination to hear it spoken aloud. Free and instant, right in your browser." />
   <meta property="og:url" content="https://frenchpronounce.com/" />
@@ -25,13 +26,12 @@
 
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- ===== Structured data: helps Google AND AI assistants (ChatGPT,
-       Claude, Perplexity, Google's AI Overviews) understand the page. ===== -->
+  <!-- ===== Structured data: helps Google AND AI assistants understand the page ===== -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "LearningResource",
-    "name": "French Pronunciation",
+    "name": "French Pronounce",
     "description": "A free interactive tool to hear how French letters, accents, and common letter-combinations are pronounced. Click any tile to hear the exact sound and an example word spoken aloud.",
     "url": "https://frenchpronounce.com/",
     "inLanguage": "en",
@@ -43,16 +43,75 @@
   }
   </script>
 
-  <!-- ==========================================================
-       GOOGLE ADSENSE (for the future)
-       When you're approved for AdSense, paste the <script> tag
-       Google gives you right here in the <head>. The boxes marked
-       "Ad space" further down are where ads will appear.
-       ========================================================== -->
+  <!-- ===== FAQ structured data: eligible for Google rich results & AI answers ===== -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do you pronounce the French R?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The French “r” (/ʁ/) is made at the back of the throat rather than with the tip of the tongue like the English r. It sounds a little like a soft gargle. Practise with words such as rouge and Paris."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is “ou” pronounced in French?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The combination ou makes a single /u/ sound, like “oo” in “food” — for example, bonjour and vous."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What are French nasal sounds?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Nasal vowels are made by letting air pass through the nose. French has four main ones: on/om (/ɔ̃/), an/en (/ɑ̃/), in/ain (/ɛ̃/) and un (/œ̃/), as in nom, enfant, pain and un."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between é and è?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "é (accent aigu) sounds like “ay” (/e/), as in café. è (accent grave) sounds like “eh” (/ɛ/), as in père."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are final consonants silent in French?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Often, yes. Many final consonants — like the -s in vous or the -t in petit — are not pronounced, although there are exceptions you learn with practice."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is this tool free to use?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. French Pronounce is completely free, runs in your web browser, and needs no signup or download."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does the audio work?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It uses your device’s built-in French text-to-speech voice, so you can hear each letter, sound and example word spoken aloud instantly."
+      }
+    }
+  ]
+}
+  </script>
 </head>
 <body>
   <nav class="nav">
-    <a class="nav__brand" href="index.html">🇫🇷 French Pronunciation</a>
+    <a class="nav__brand" href="/">🇫🇷 French Pronounce</a>
   </nav>
 
   <main>
@@ -66,7 +125,7 @@
 
     <!-- Shown only if the browser has no French voice installed -->
     <div id="voiceWarning" class="warn" hidden>
-      Your device doesn't seem to have a French voice installed, so playback may
+      Your device doesn’t seem to have a French voice installed, so playback may
       sound off. On Windows you can add one under
       <strong>Settings → Time &amp; language → Language &amp; region → Add a language → French</strong>.
     </div>
@@ -85,17 +144,406 @@
       <button class="tab" data-panel="accents" type="button">Accents</button>
     </div>
 
-    <!-- Panels are filled in by the script below -->
-    <section id="alphabet" class="panel active">
-      <div class="grid grid--alphabet" id="alphabetGrid"></div>
+    <section id="alphabet" class="panel active" aria-label="French alphabet pronunciation">
+      <div class="grid grid--alphabet">
+        <button class="tile" type="button" data-say="A" aria-label="Hear the French letter A">
+          <div class="tile__row"><span class="tile__grapheme" lang="fr">A</span><span class="tile__spk" aria-hidden="true">🔊</span></div>
+          <span class="tile__ipa">/a/</span>
+          <span class="tile__hint">ah</span>
+        </button>
+        <button class="tile" type="button" data-say="B" aria-label="Hear the French letter B">
+          <div class="tile__row"><span class="tile__grapheme" lang="fr">B</span><span class="tile__spk" aria-hidden="true">🔊</span></div>
+          <span class="tile__ipa">/be/</span>
+          <span class="tile__hint">bay</span>
+        </button>
+        <button class="tile" type="button" data-say="C" aria-label="Hear the French letter C">
+          <div class="tile__row"><span class="tile__grapheme" lang="fr">C</span><span class="tile__spk" aria-hidden="true">🔊</span></div>
+          <span class="tile__ipa">/se/</span>
+          <span class="tile__hint">say</span>
+        </button>
+        <button class="tile" type="button" data-say="D" aria-label="Hear the French letter D">
+          <div class="tile__row"><span class="tile__grapheme" lang="fr">D</span><span class="tile__spk" aria-hidden="true">🔊</span></div>
+          <span class="tile__ipa">/de/</span>
+          <span class="tile__hint">day</span>
+        </button>
+        <button class="tile" type="button" data-say="E" aria-label="Hear the French letter E">
+          <div class="tile__row"><span class="tile__grapheme" lang="fr">E</span><span class="tile__spk" aria-hidden="true">🔊</span></div>
+          <span class="tile__ipa">/ə/</span>
+          <span class="tile__hint">uh</span>
+        </button>
+        <button class="tile" type="button" data-say="F" aria-label="Hear the French letter F">
+          <div class="tile__row"><span class="tile__grapheme" lang="fr">F</span><span class="tile__spk" aria-hidden="true">🔊</span></div>
+          <span class="tile__ipa">/ɛf/</span>
+          <span class="tile__hint">eff</span>
+        </button>
+        <button class="tile" type="button" data-say="G" aria-label="Hear the French letter G">
+          <div class="tile__row"><span class="tile__grapheme" lang="fr">G</span><span class="tile__spk" aria-hidden="true">🔊</span></div>
+          <span class="tile__ipa">/ʒe/</span>
+          <span class="tile__hint">zhay</span>
+        </button>
+        <button class="tile" type="button" data-say="H" aria-label="Hear the French letter H">
+          <div class="tile__row"><span class="tile__grapheme" lang="fr">H</span><span class="tile__spk" aria-hidden="true">🔊</span></div>
+          <span class="tile__ipa">/aʃ/</span>
+          <span class="tile__hint">ash</span>
+        </button>
+        <button class="tile" type="button" data-say="I" aria-label="Hear the French letter I">
+          <div class="tile__row"><span class="tile__grapheme" lang="fr">I</span><span class="tile__spk" aria-hidden="true">🔊</span></div>
+          <span class="tile__ipa">/i/</span>
+          <span class="tile__hint">ee</span>
+        </button>
+        <button class="tile" type="button" data-say="J" aria-label="Hear the French letter J">
+          <div class="tile__row"><span class="tile__grapheme" lang="fr">J</span><span class="tile__spk" aria-hidden="true">🔊</span></div>
+          <span class="tile__ipa">/ʒi/</span>
+          <span class="tile__hint">zhee</span>
+        </button>
+        <button class="tile" type="button" data-say="K" aria-label="Hear the French letter K">
+          <div class="tile__row"><span class="tile__grapheme" lang="fr">K</span><span class="tile__spk" aria-hidden="true">🔊</span></div>
+          <span class="tile__ipa">/ka/</span>
+          <span class="tile__hint">kah</span>
+        </button>
+        <button class="tile" type="button" data-say="L" aria-label="Hear the French letter L">
+          <div class="tile__row"><span class="tile__grapheme" lang="fr">L</span><span class="tile__spk" aria-hidden="true">🔊</span></div>
+          <span class="tile__ipa">/ɛl/</span>
+          <span class="tile__hint">ell</span>
+        </button>
+        <button class="tile" type="button" data-say="M" aria-label="Hear the French letter M">
+          <div class="tile__row"><span class="tile__grapheme" lang="fr">M</span><span class="tile__spk" aria-hidden="true">🔊</span></div>
+          <span class="tile__ipa">/ɛm/</span>
+          <span class="tile__hint">em</span>
+        </button>
+        <button class="tile" type="button" data-say="N" aria-label="Hear the French letter N">
+          <div class="tile__row"><span class="tile__grapheme" lang="fr">N</span><span class="tile__spk" aria-hidden="true">🔊</span></div>
+          <span class="tile__ipa">/ɛn/</span>
+          <span class="tile__hint">en</span>
+        </button>
+        <button class="tile" type="button" data-say="O" aria-label="Hear the French letter O">
+          <div class="tile__row"><span class="tile__grapheme" lang="fr">O</span><span class="tile__spk" aria-hidden="true">🔊</span></div>
+          <span class="tile__ipa">/o/</span>
+          <span class="tile__hint">oh</span>
+        </button>
+        <button class="tile" type="button" data-say="P" aria-label="Hear the French letter P">
+          <div class="tile__row"><span class="tile__grapheme" lang="fr">P</span><span class="tile__spk" aria-hidden="true">🔊</span></div>
+          <span class="tile__ipa">/pe/</span>
+          <span class="tile__hint">pay</span>
+        </button>
+        <button class="tile" type="button" data-say="Q" aria-label="Hear the French letter Q">
+          <div class="tile__row"><span class="tile__grapheme" lang="fr">Q</span><span class="tile__spk" aria-hidden="true">🔊</span></div>
+          <span class="tile__ipa">/ky/</span>
+          <span class="tile__hint">koo (tight)</span>
+        </button>
+        <button class="tile" type="button" data-say="R" aria-label="Hear the French letter R">
+          <div class="tile__row"><span class="tile__grapheme" lang="fr">R</span><span class="tile__spk" aria-hidden="true">🔊</span></div>
+          <span class="tile__ipa">/ɛʁ/</span>
+          <span class="tile__hint">air (throaty)</span>
+        </button>
+        <button class="tile" type="button" data-say="S" aria-label="Hear the French letter S">
+          <div class="tile__row"><span class="tile__grapheme" lang="fr">S</span><span class="tile__spk" aria-hidden="true">🔊</span></div>
+          <span class="tile__ipa">/ɛs/</span>
+          <span class="tile__hint">ess</span>
+        </button>
+        <button class="tile" type="button" data-say="T" aria-label="Hear the French letter T">
+          <div class="tile__row"><span class="tile__grapheme" lang="fr">T</span><span class="tile__spk" aria-hidden="true">🔊</span></div>
+          <span class="tile__ipa">/te/</span>
+          <span class="tile__hint">tay</span>
+        </button>
+        <button class="tile" type="button" data-say="U" aria-label="Hear the French letter U">
+          <div class="tile__row"><span class="tile__grapheme" lang="fr">U</span><span class="tile__spk" aria-hidden="true">🔊</span></div>
+          <span class="tile__ipa">/y/</span>
+          <span class="tile__hint">ew (tight)</span>
+        </button>
+        <button class="tile" type="button" data-say="V" aria-label="Hear the French letter V">
+          <div class="tile__row"><span class="tile__grapheme" lang="fr">V</span><span class="tile__spk" aria-hidden="true">🔊</span></div>
+          <span class="tile__ipa">/ve/</span>
+          <span class="tile__hint">vay</span>
+        </button>
+        <button class="tile" type="button" data-say="W" aria-label="Hear the French letter W">
+          <div class="tile__row"><span class="tile__grapheme" lang="fr">W</span><span class="tile__spk" aria-hidden="true">🔊</span></div>
+          <span class="tile__ipa">/dublə ve/</span>
+          <span class="tile__hint">doo-bluh-vay</span>
+        </button>
+        <button class="tile" type="button" data-say="X" aria-label="Hear the French letter X">
+          <div class="tile__row"><span class="tile__grapheme" lang="fr">X</span><span class="tile__spk" aria-hidden="true">🔊</span></div>
+          <span class="tile__ipa">/iks/</span>
+          <span class="tile__hint">eeks</span>
+        </button>
+        <button class="tile" type="button" data-say="Y" aria-label="Hear the French letter Y">
+          <div class="tile__row"><span class="tile__grapheme" lang="fr">Y</span><span class="tile__spk" aria-hidden="true">🔊</span></div>
+          <span class="tile__ipa">/iɡʁɛk/</span>
+          <span class="tile__hint">ee-grek</span>
+        </button>
+        <button class="tile" type="button" data-say="Z" aria-label="Hear the French letter Z">
+          <div class="tile__row"><span class="tile__grapheme" lang="fr">Z</span><span class="tile__spk" aria-hidden="true">🔊</span></div>
+          <span class="tile__ipa">/zɛd/</span>
+          <span class="tile__hint">zed</span>
+        </button>
+      </div>
     </section>
 
-    <section id="combos" class="panel">
-      <div class="grid grid--combos" id="combosGrid"></div>
+    <section id="combos" class="panel" aria-label="Common French letter combinations">
+      <div class="grid grid--combos">
+        <div class="tile">
+          <span class="tile__grapheme" lang="fr">ou</span>
+          <span class="tile__ipa">/u/</span>
+          <span class="tile__hint">oo, as in 'food'</span>
+          <div class="tile__actions">
+            <button class="chip chip--sound" type="button" data-say="ou" aria-label="Hear the sound ou"><span class="play" aria-hidden="true">▶</span> sound</button>
+            <button class="chip chip--example" type="button" data-say="bonjour" aria-label="Hear the example word bonjour"><span class="play" aria-hidden="true">▶</span> <span lang="fr">bonjour</span></button>
+          </div>
+        </div>
+        <div class="tile">
+          <span class="tile__grapheme" lang="fr">oi</span>
+          <span class="tile__ipa">/wa/</span>
+          <span class="tile__hint">wah</span>
+          <div class="tile__actions">
+            <button class="chip chip--sound" type="button" data-say="oi" aria-label="Hear the sound oi"><span class="play" aria-hidden="true">▶</span> sound</button>
+            <button class="chip chip--example" type="button" data-say="moi" aria-label="Hear the example word moi"><span class="play" aria-hidden="true">▶</span> <span lang="fr">moi</span></button>
+          </div>
+        </div>
+        <div class="tile">
+          <span class="tile__grapheme" lang="fr">au / eau</span>
+          <span class="tile__ipa">/o/</span>
+          <span class="tile__hint">oh</span>
+          <div class="tile__actions">
+            <button class="chip chip--sound" type="button" data-say="au" aria-label="Hear the sound au / eau"><span class="play" aria-hidden="true">▶</span> sound</button>
+            <button class="chip chip--example" type="button" data-say="bateau" aria-label="Hear the example word bateau"><span class="play" aria-hidden="true">▶</span> <span lang="fr">bateau</span></button>
+          </div>
+        </div>
+        <div class="tile">
+          <span class="tile__grapheme" lang="fr">ai / ei</span>
+          <span class="tile__ipa">/ɛ/</span>
+          <span class="tile__hint">eh, as in 'bed'</span>
+          <div class="tile__actions">
+            <button class="chip chip--sound" type="button" data-say="ai" aria-label="Hear the sound ai / ei"><span class="play" aria-hidden="true">▶</span> sound</button>
+            <button class="chip chip--example" type="button" data-say="maison" aria-label="Hear the example word maison"><span class="play" aria-hidden="true">▶</span> <span lang="fr">maison</span></button>
+          </div>
+        </div>
+        <div class="tile">
+          <span class="tile__grapheme" lang="fr">eu</span>
+          <span class="tile__ipa">/ø/</span>
+          <span class="tile__hint">uh, lips rounded</span>
+          <div class="tile__actions">
+            <button class="chip chip--sound" type="button" data-say="eu" aria-label="Hear the sound eu"><span class="play" aria-hidden="true">▶</span> sound</button>
+            <button class="chip chip--example" type="button" data-say="deux" aria-label="Hear the example word deux"><span class="play" aria-hidden="true">▶</span> <span lang="fr">deux</span></button>
+          </div>
+        </div>
+        <div class="tile">
+          <span class="tile__grapheme" lang="fr">on / om</span>
+          <span class="tile__ipa">/ɔ̃/</span>
+          <span class="tile__hint">nasal 'ong'</span>
+          <div class="tile__actions">
+            <button class="chip chip--sound" type="button" data-say="on" aria-label="Hear the sound on / om"><span class="play" aria-hidden="true">▶</span> sound</button>
+            <button class="chip chip--example" type="button" data-say="nom" aria-label="Hear the example word nom"><span class="play" aria-hidden="true">▶</span> <span lang="fr">nom</span></button>
+          </div>
+        </div>
+        <div class="tile">
+          <span class="tile__grapheme" lang="fr">an / en</span>
+          <span class="tile__ipa">/ɑ̃/</span>
+          <span class="tile__hint">nasal 'ahn'</span>
+          <div class="tile__actions">
+            <button class="chip chip--sound" type="button" data-say="an" aria-label="Hear the sound an / en"><span class="play" aria-hidden="true">▶</span> sound</button>
+            <button class="chip chip--example" type="button" data-say="enfant" aria-label="Hear the example word enfant"><span class="play" aria-hidden="true">▶</span> <span lang="fr">enfant</span></button>
+          </div>
+        </div>
+        <div class="tile">
+          <span class="tile__grapheme" lang="fr">in / ain</span>
+          <span class="tile__ipa">/ɛ̃/</span>
+          <span class="tile__hint">nasal 'ang'</span>
+          <div class="tile__actions">
+            <button class="chip chip--sound" type="button" data-say="ain" aria-label="Hear the sound in / ain"><span class="play" aria-hidden="true">▶</span> sound</button>
+            <button class="chip chip--example" type="button" data-say="pain" aria-label="Hear the example word pain"><span class="play" aria-hidden="true">▶</span> <span lang="fr">pain</span></button>
+          </div>
+        </div>
+        <div class="tile">
+          <span class="tile__grapheme" lang="fr">un</span>
+          <span class="tile__ipa">/œ̃/</span>
+          <span class="tile__hint">nasal 'uhn'</span>
+          <div class="tile__actions">
+            <button class="chip chip--sound" type="button" data-say="un" aria-label="Hear the sound un"><span class="play" aria-hidden="true">▶</span> sound</button>
+            <button class="chip chip--example" type="button" data-say="un" aria-label="Hear the example word un"><span class="play" aria-hidden="true">▶</span> <span lang="fr">un</span></button>
+          </div>
+        </div>
+        <div class="tile">
+          <span class="tile__grapheme" lang="fr">ch</span>
+          <span class="tile__ipa">/ʃ/</span>
+          <span class="tile__hint">sh</span>
+          <div class="tile__actions">
+            <button class="chip chip--sound" type="button" data-say="che" aria-label="Hear the sound ch"><span class="play" aria-hidden="true">▶</span> sound</button>
+            <button class="chip chip--example" type="button" data-say="chat" aria-label="Hear the example word chat"><span class="play" aria-hidden="true">▶</span> <span lang="fr">chat</span></button>
+          </div>
+        </div>
+        <div class="tile">
+          <span class="tile__grapheme" lang="fr">gn</span>
+          <span class="tile__ipa">/ɲ/</span>
+          <span class="tile__hint">ny, as in 'canyon'</span>
+          <div class="tile__actions">
+            <button class="chip chip--sound" type="button" data-say="gne" aria-label="Hear the sound gn"><span class="play" aria-hidden="true">▶</span> sound</button>
+            <button class="chip chip--example" type="button" data-say="montagne" aria-label="Hear the example word montagne"><span class="play" aria-hidden="true">▶</span> <span lang="fr">montagne</span></button>
+          </div>
+        </div>
+        <div class="tile">
+          <span class="tile__grapheme" lang="fr">qu</span>
+          <span class="tile__ipa">/k/</span>
+          <span class="tile__hint">k</span>
+          <div class="tile__actions">
+            <button class="chip chip--sound" type="button" data-say="que" aria-label="Hear the sound qu"><span class="play" aria-hidden="true">▶</span> sound</button>
+            <button class="chip chip--example" type="button" data-say="quatre" aria-label="Hear the example word quatre"><span class="play" aria-hidden="true">▶</span> <span lang="fr">quatre</span></button>
+          </div>
+        </div>
+        <div class="tile">
+          <span class="tile__grapheme" lang="fr">ph</span>
+          <span class="tile__ipa">/f/</span>
+          <span class="tile__hint">f</span>
+          <div class="tile__actions">
+            <button class="chip chip--sound" type="button" data-say="phe" aria-label="Hear the sound ph"><span class="play" aria-hidden="true">▶</span> sound</button>
+            <button class="chip chip--example" type="button" data-say="photo" aria-label="Hear the example word photo"><span class="play" aria-hidden="true">▶</span> <span lang="fr">photo</span></button>
+          </div>
+        </div>
+        <div class="tile">
+          <span class="tile__grapheme" lang="fr">ç</span>
+          <span class="tile__ipa">/s/</span>
+          <span class="tile__hint">s</span>
+          <div class="tile__actions">
+            <button class="chip chip--sound" type="button" data-say="ça" aria-label="Hear the sound ç"><span class="play" aria-hidden="true">▶</span> sound</button>
+            <button class="chip chip--example" type="button" data-say="français" aria-label="Hear the example word français"><span class="play" aria-hidden="true">▶</span> <span lang="fr">français</span></button>
+          </div>
+        </div>
+        <div class="tile">
+          <span class="tile__grapheme" lang="fr">ille</span>
+          <span class="tile__ipa">/ij/</span>
+          <span class="tile__hint">ee-y</span>
+          <div class="tile__actions">
+            <button class="chip chip--sound" type="button" data-say="ille" aria-label="Hear the sound ille"><span class="play" aria-hidden="true">▶</span> sound</button>
+            <button class="chip chip--example" type="button" data-say="fille" aria-label="Hear the example word fille"><span class="play" aria-hidden="true">▶</span> <span lang="fr">fille</span></button>
+          </div>
+        </div>
+        <div class="tile">
+          <span class="tile__grapheme" lang="fr">gu</span>
+          <span class="tile__ipa">/ɡ/</span>
+          <span class="tile__hint">hard g</span>
+          <div class="tile__actions">
+            <button class="chip chip--sound" type="button" data-say="gue" aria-label="Hear the sound gu"><span class="play" aria-hidden="true">▶</span> sound</button>
+            <button class="chip chip--example" type="button" data-say="guitare" aria-label="Hear the example word guitare"><span class="play" aria-hidden="true">▶</span> <span lang="fr">guitare</span></button>
+          </div>
+        </div>
+        <div class="tile">
+          <span class="tile__grapheme" lang="fr">-er</span>
+          <span class="tile__ipa">/e/</span>
+          <span class="tile__hint">ay (at word end)</span>
+          <div class="tile__actions">
+            <button class="chip chip--sound" type="button" data-say="er" aria-label="Hear the sound -er"><span class="play" aria-hidden="true">▶</span> sound</button>
+            <button class="chip chip--example" type="button" data-say="parler" aria-label="Hear the example word parler"><span class="play" aria-hidden="true">▶</span> <span lang="fr">parler</span></button>
+          </div>
+        </div>
+        <div class="tile">
+          <span class="tile__grapheme" lang="fr">-ez</span>
+          <span class="tile__ipa">/e/</span>
+          <span class="tile__hint">ay (at word end)</span>
+          <div class="tile__actions">
+            <button class="chip chip--sound" type="button" data-say="ez" aria-label="Hear the sound -ez"><span class="play" aria-hidden="true">▶</span> sound</button>
+            <button class="chip chip--example" type="button" data-say="nez" aria-label="Hear the example word nez"><span class="play" aria-hidden="true">▶</span> <span lang="fr">nez</span></button>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <section id="accents" class="panel">
-      <div class="grid grid--combos" id="accentsGrid"></div>
+    <section id="accents" class="panel" aria-label="French accented letters">
+      <div class="grid grid--combos">
+        <div class="tile">
+          <span class="tile__grapheme" lang="fr">é</span>
+          <span class="tile__ipa">/e/</span>
+          <span class="tile__hint">ay — accent aigu</span>
+          <div class="tile__actions">
+            <button class="chip chip--sound" type="button" data-say="é" aria-label="Hear the sound é"><span class="play" aria-hidden="true">▶</span> sound</button>
+            <button class="chip chip--example" type="button" data-say="café" aria-label="Hear the example word café"><span class="play" aria-hidden="true">▶</span> <span lang="fr">café</span></button>
+          </div>
+        </div>
+        <div class="tile">
+          <span class="tile__grapheme" lang="fr">è</span>
+          <span class="tile__ipa">/ɛ/</span>
+          <span class="tile__hint">eh — accent grave</span>
+          <div class="tile__actions">
+            <button class="chip chip--sound" type="button" data-say="è" aria-label="Hear the sound è"><span class="play" aria-hidden="true">▶</span> sound</button>
+            <button class="chip chip--example" type="button" data-say="père" aria-label="Hear the example word père"><span class="play" aria-hidden="true">▶</span> <span lang="fr">père</span></button>
+          </div>
+        </div>
+        <div class="tile">
+          <span class="tile__grapheme" lang="fr">ê</span>
+          <span class="tile__ipa">/ɛ/</span>
+          <span class="tile__hint">eh — circonflexe</span>
+          <div class="tile__actions">
+            <button class="chip chip--sound" type="button" data-say="ê" aria-label="Hear the sound ê"><span class="play" aria-hidden="true">▶</span> sound</button>
+            <button class="chip chip--example" type="button" data-say="être" aria-label="Hear the example word être"><span class="play" aria-hidden="true">▶</span> <span lang="fr">être</span></button>
+          </div>
+        </div>
+        <div class="tile">
+          <span class="tile__grapheme" lang="fr">à</span>
+          <span class="tile__ipa">/a/</span>
+          <span class="tile__hint">ah — changes meaning</span>
+          <div class="tile__actions">
+            <button class="chip chip--sound" type="button" data-say="à" aria-label="Hear the sound à"><span class="play" aria-hidden="true">▶</span> sound</button>
+            <button class="chip chip--example" type="button" data-say="là" aria-label="Hear the example word là"><span class="play" aria-hidden="true">▶</span> <span lang="fr">là</span></button>
+          </div>
+        </div>
+        <div class="tile">
+          <span class="tile__grapheme" lang="fr">ô</span>
+          <span class="tile__ipa">/o/</span>
+          <span class="tile__hint">oh — circonflexe</span>
+          <div class="tile__actions">
+            <button class="chip chip--sound" type="button" data-say="ô" aria-label="Hear the sound ô"><span class="play" aria-hidden="true">▶</span> sound</button>
+            <button class="chip chip--example" type="button" data-say="hôtel" aria-label="Hear the example word hôtel"><span class="play" aria-hidden="true">▶</span> <span lang="fr">hôtel</span></button>
+          </div>
+        </div>
+        <div class="tile">
+          <span class="tile__grapheme" lang="fr">ç</span>
+          <span class="tile__ipa">/s/</span>
+          <span class="tile__hint">s — cédille</span>
+          <div class="tile__actions">
+            <button class="chip chip--sound" type="button" data-say="ça" aria-label="Hear the sound ç"><span class="play" aria-hidden="true">▶</span> sound</button>
+            <button class="chip chip--example" type="button" data-say="garçon" aria-label="Hear the example word garçon"><span class="play" aria-hidden="true">▶</span> <span lang="fr">garçon</span></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Readable content for humans, search engines, and AI ===== -->
+    <section class="prose">
+      <h2>How to use this French pronunciation tool</h2>
+      <p>Pick a tab — <strong>Alphabet</strong>, <strong>Common combinations</strong>, or <strong>Accents</strong> — then click any tile to hear it spoken aloud. On the combination tiles, the blue <em>sound</em> button plays the sound on its own, while the second button plays a real French example word so you can hear it in context. Use the <strong>Slow</strong> speed for the trickier sounds.</p>
+
+      <h2>About French pronunciation</h2>
+      <p>French spelling and pronunciation don’t always match, which is what makes it hard for beginners. A handful of patterns cause most of the trouble: <span lang="fr">ou</span>, <span lang="fr">oi</span> and <span lang="fr">eu</span>; the four nasal vowels (<span lang="fr">on</span>, <span lang="fr">an</span>, <span lang="fr">in</span>, <span lang="fr">un</span>); the throaty French <span lang="fr">r</span>; and the accents <span lang="fr">é</span>, <span lang="fr">è</span> and <span lang="fr">ê</span>. Learn these few and most French words suddenly become readable. This tool lets you hear each one as often as you like.</p>
+
+      <h2 id="faq">Frequently asked questions</h2>
+      <div class="faq">
+        <details>
+          <summary>How do you pronounce the French R?</summary>
+          <p>The French “r” (/ʁ/) is made at the back of the throat rather than with the tip of the tongue like the English r. It sounds a little like a soft gargle. Practise with words such as <span lang="fr">rouge</span> and <span lang="fr">Paris</span>.</p>
+        </details>
+        <details>
+          <summary>How is “ou” pronounced in French?</summary>
+          <p>The combination <span lang="fr">ou</span> makes a single /u/ sound, like “oo” in “food” — for example, <span lang="fr">bonjour</span> and <span lang="fr">vous</span>.</p>
+        </details>
+        <details>
+          <summary>What are French nasal sounds?</summary>
+          <p>Nasal vowels are made by letting air pass through the nose. French has four main ones: <span lang="fr">on/om</span> (/ɔ̃/), <span lang="fr">an/en</span> (/ɑ̃/), <span lang="fr">in/ain</span> (/ɛ̃/) and <span lang="fr">un</span> (/œ̃/), as in <span lang="fr">nom</span>, <span lang="fr">enfant</span>, <span lang="fr">pain</span> and <span lang="fr">un</span>.</p>
+        </details>
+        <details>
+          <summary>What is the difference between é and è?</summary>
+          <p><span lang="fr">é</span> (accent aigu) sounds like “ay” (/e/), as in <span lang="fr">café</span>. <span lang="fr">è</span> (accent grave) sounds like “eh” (/ɛ/), as in <span lang="fr">père</span>.</p>
+        </details>
+        <details>
+          <summary>Are final consonants silent in French?</summary>
+          <p>Often, yes. Many final consonants — like the -s in <span lang="fr">vous</span> or the -t in <span lang="fr">petit</span> — are not pronounced, although there are exceptions you learn with practice.</p>
+        </details>
+        <details>
+          <summary>Is this tool free to use?</summary>
+          <p>Yes. French Pronounce is completely free, runs in your web browser, and needs no signup or download.</p>
+        </details>
+        <details>
+          <summary>How does the audio work?</summary>
+          <p>It uses your device’s built-in French text-to-speech voice, so you can hear each letter, sound and example word spoken aloud instantly.</p>
+        </details>
+      </div>
     </section>
 
     <!-- Ad space (bottom) -->
@@ -103,71 +551,24 @@
   </main>
 
   <footer>
-    &copy; 2026 French Pronunciation · Built to make learning easier.
+    &copy; 2026 French Pronounce · Built to make learning easier.
   </footer>
 
   <!-- ==========================================================
-       The pronunciation logic. Plain JavaScript, no libraries.
-       It uses the browser's built-in speech engine (Web Speech API).
+       Interactivity. The content above is real HTML (so search
+       engines and AI can read it); this script just makes it clickable.
        ========================================================== -->
   <script>
-    // ---- 1. The content. Edit these lists to add or change tiles. ----
-
-    // Alphabet: letter + how its NAME sounds in French (IPA) + a rough English hint.
-    const ALPHABET = [
-      ["A", "/a/", "ah"], ["B", "/be/", "bay"], ["C", "/se/", "say"],
-      ["D", "/de/", "day"], ["E", "/ə/", "uh"], ["F", "/ɛf/", "eff"],
-      ["G", "/ʒe/", "zhay"], ["H", "/aʃ/", "ash"], ["I", "/i/", "ee"],
-      ["J", "/ʒi/", "zhee"], ["K", "/ka/", "kah"], ["L", "/ɛl/", "ell"],
-      ["M", "/ɛm/", "em"], ["N", "/ɛn/", "en"], ["O", "/o/", "oh"],
-      ["P", "/pe/", "pay"], ["Q", "/ky/", "koo (tight)"], ["R", "/ɛʁ/", "air (throaty)"],
-      ["S", "/ɛs/", "ess"], ["T", "/te/", "tay"], ["U", "/y/", "ew (tight)"],
-      ["V", "/ve/", "vay"], ["W", "/dublə ve/", "doo-bluh-vay"], ["X", "/iks/", "eeks"],
-      ["Y", "/iɡʁɛk/", "ee-grek"], ["Z", "/zɛd/", "zed"]
-    ];
-
-    // Combinations: [ what you see, the ISOLATED SOUND to speak, IPA, English hint, example word ]
-    // The "sound" is the sound on its own. For consonants we add a light "e"
-    // (che, gne, que...) because a consonant can't really be said with no vowel.
-    const COMBOS = [
-      ["ou", "ou", "/u/", "oo, as in 'food'", "bonjour"],
-      ["oi", "oi", "/wa/", "wah", "moi"],
-      ["au / eau", "au", "/o/", "oh", "bateau"],
-      ["ai / ei", "ai", "/ɛ/", "eh, as in 'bed'", "maison"],
-      ["eu", "eu", "/ø/", "uh, lips rounded", "deux"],
-      ["on / om", "on", "/ɔ̃/", "nasal 'ong'", "nom"],
-      ["an / en", "an", "/ɑ̃/", "nasal 'ahn'", "enfant"],
-      ["in / ain", "ain", "/ɛ̃/", "nasal 'ang'", "pain"],
-      ["un", "un", "/œ̃/", "nasal 'uhn'", "un"],
-      ["ch", "che", "/ʃ/", "sh", "chat"],
-      ["gn", "gne", "/ɲ/", "ny, as in 'canyon'", "montagne"],
-      ["qu", "que", "/k/", "k", "quatre"],
-      ["ph", "phe", "/f/", "f", "photo"],
-      ["ç", "ça", "/s/", "s", "français"],
-      ["ille", "ille", "/ij/", "ee-y", "fille"],
-      ["gu", "gue", "/ɡ/", "hard g", "guitare"],
-      ["-er", "er", "/e/", "ay (at word end)", "parler"],
-      ["-ez", "ez", "/e/", "ay (at word end)", "nez"]
-    ];
-
-    // Accents: [ shown, isolated sound, IPA, hint, example word ]
-    const ACCENTS = [
-      ["é", "é", "/e/", "ay — accent aigu", "café"],
-      ["è", "è", "/ɛ/", "eh — accent grave", "père"],
-      ["ê", "ê", "/ɛ/", "eh — circonflexe", "être"],
-      ["à", "à", "/a/", "ah — changes meaning", "là"],
-      ["ô", "ô", "/o/", "oh — circonflexe", "hôtel"],
-      ["ç", "ça", "/s/", "s — cédille", "garçon"]
-    ];
-
-    // ---- 2. Speech engine setup ----
-    let currentRate = 1;
-    let frVoice = null;
+    // ---- Speech engine setup (Web Speech API, built into the browser) ----
+    var currentRate = 1;
+    var frVoice = null;
 
     function pickVoice() {
-      const voices = window.speechSynthesis ? speechSynthesis.getVoices() : [];
-      frVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith("fr")) || null;
-      // Warn only after voices have actually loaded and none are French.
+      var voices = window.speechSynthesis ? speechSynthesis.getVoices() : [];
+      frVoice = null;
+      for (var i = 0; i < voices.length; i++) {
+        if (voices[i].lang && voices[i].lang.toLowerCase().indexOf("fr") === 0) { frVoice = voices[i]; break; }
+      }
       if (voices.length && !frVoice) {
         document.getElementById("voiceWarning").hidden = false;
       }
@@ -177,97 +578,62 @@
       speechSynthesis.onvoiceschanged = pickVoice;
       pickVoice();
     } else {
-      document.getElementById("voiceWarning").hidden = false;
-      document.getElementById("voiceWarning").textContent =
-        "Your browser doesn't support speech playback. Try Chrome, Edge, or Safari.";
+      var w = document.getElementById("voiceWarning");
+      w.hidden = false;
+      w.textContent = "Your browser doesn’t support speech playback. Try Chrome, Edge, or Safari.";
     }
 
-    let lastTile = null;
+    var lastTile = null;
     function speak(text, tileEl) {
       if (!("speechSynthesis" in window)) return;
       speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(text);
+      var u = new SpeechSynthesisUtterance(text);
       u.lang = "fr-FR";
       if (frVoice) u.voice = frVoice;
       u.rate = currentRate;
-
-      // Highlight the tile while it's speaking.
       if (lastTile) lastTile.classList.remove("speaking");
       if (tileEl) {
         tileEl.classList.add("speaking");
         lastTile = tileEl;
-        u.onend = () => tileEl.classList.remove("speaking");
+        u.onend = function () { tileEl.classList.remove("speaking"); };
       }
       speechSynthesis.speak(u);
     }
 
-    // ---- 3. Build the tiles ----
-    function makeAlphabet() {
-      const grid = document.getElementById("alphabetGrid");
-      ALPHABET.forEach(([letter, ipa, hint]) => {
-        const b = document.createElement("button");
-        b.className = "tile";
-        b.type = "button";
-        b.innerHTML =
-          '<div class="tile__row"><span class="tile__grapheme">' + letter +
-          '</span><span class="tile__spk">🔊</span></div>' +
-          '<span class="tile__ipa">' + ipa + '</span>' +
-          '<span class="tile__hint">' + hint + '</span>';
-        // Speak the letter's NAME in French.
-        b.addEventListener("click", () => speak(letter, b));
-        grid.appendChild(b);
+    // ---- Wire up every element that has data-say ----
+    var sayEls = document.querySelectorAll("[data-say]");
+    for (var i = 0; i < sayEls.length; i++) {
+      (function (el) {
+        el.addEventListener("click", function () {
+          var tile = el.closest(".tile");
+          speak(el.getAttribute("data-say"), tile);
+        });
+      })(sayEls[i]);
+    }
+
+    // ---- Tabs ----
+    var tabs = document.querySelectorAll(".tab");
+    for (var t = 0; t < tabs.length; t++) {
+      tabs[t].addEventListener("click", function () {
+        var all = document.querySelectorAll(".tab");
+        for (var k = 0; k < all.length; k++) all[k].classList.remove("active");
+        var panels = document.querySelectorAll(".panel");
+        for (var p = 0; p < panels.length; p++) panels[p].classList.remove("active");
+        this.classList.add("active");
+        document.getElementById(this.getAttribute("data-panel")).classList.add("active");
       });
     }
 
-    function makeCombos(list, gridId) {
-      const grid = document.getElementById(gridId);
-      list.forEach(([shown, sound, ipa, hint, example]) => {
-        // Use a plain <div> so we can put two real buttons inside it.
-        const tile = document.createElement("div");
-        tile.className = "tile";
-        tile.innerHTML =
-          '<span class="tile__grapheme">' + shown + '</span>' +
-          '<span class="tile__ipa">' + ipa + '</span>' +
-          '<span class="tile__hint">' + hint + '</span>' +
-          '<div class="tile__actions">' +
-            '<button class="chip chip--sound" type="button">' +
-              '<span class="play">▶</span> sound</button>' +
-            '<button class="chip chip--example" type="button">' +
-              '<span class="play">▶</span> ' + example + '</button>' +
-          '</div>';
-
-        // Two separate buttons: the isolated sound, and the example word.
-        const soundBtn = tile.querySelector(".chip--sound");
-        const exampleBtn = tile.querySelector(".chip--example");
-        soundBtn.addEventListener("click", () => speak(sound, tile));
-        exampleBtn.addEventListener("click", () => speak(example, tile));
-
-        grid.appendChild(tile);
+    // ---- Speed buttons ----
+    var pills = document.querySelectorAll(".pill");
+    for (var s = 0; s < pills.length; s++) {
+      pills[s].addEventListener("click", function () {
+        var all = document.querySelectorAll(".pill");
+        for (var k = 0; k < all.length; k++) all[k].classList.remove("active");
+        this.classList.add("active");
+        currentRate = parseFloat(this.getAttribute("data-rate"));
       });
     }
-
-    makeAlphabet();
-    makeCombos(COMBOS, "combosGrid");
-    makeCombos(ACCENTS, "accentsGrid");
-
-    // ---- 4. Tabs ----
-    document.querySelectorAll(".tab").forEach(tab => {
-      tab.addEventListener("click", () => {
-        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-        document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
-        tab.classList.add("active");
-        document.getElementById(tab.dataset.panel).classList.add("active");
-      });
-    });
-
-    // ---- 5. Speed buttons ----
-    document.querySelectorAll(".pill").forEach(pill => {
-      pill.addEventListener("click", () => {
-        document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
-        pill.classList.add("active");
-        currentRate = parseFloat(pill.dataset.rate);
-      });
-    });
   </script>
 </body>
 </html>

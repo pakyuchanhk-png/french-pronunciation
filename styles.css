@@ -214,6 +214,36 @@ button.tile:active { transform: scale(0.97); }
   text-transform: uppercase;
 }
 
+/* ---- Readable content / FAQ section ---- */
+.prose {
+  max-width: 720px;
+  margin: 3rem auto 0;
+}
+.prose h2 {
+  font-size: 1.4rem;
+  margin: 2.25rem 0 0.5rem;
+}
+.prose p { color: var(--muted); }
+.prose [lang="fr"] { color: var(--text); }
+
+.faq { margin-top: 0.75rem; }
+.faq details {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.6rem;
+  background: var(--surface);
+}
+.faq summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text);
+  list-style-position: inside;
+}
+.faq summary:hover { color: var(--accent); }
+.faq details[open] summary { margin-bottom: 0.5rem; }
+.faq p { margin: 0; }
+
 /* ---- Footer ---- */
 footer {
   border-top: 1px solid var(--border);
