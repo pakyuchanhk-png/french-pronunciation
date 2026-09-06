@@ -2,5 +2,4 @@
 User-agent: *
 Allow: /
 
-# Once your site is live, add your sitemap here, e.g.:
-# Sitemap: https://your-domain.example/sitemap.xml
+Sitemap: https://pakyuchanhk-png.github.io/french-pronunciation/sitemap.xml
