@@ -252,3 +252,9 @@ footer {
   padding: 2rem 1.5rem;
   font-size: 0.9rem;
 }
+footer a { color: var(--accent); }
+
+/* Links inside prose content */
+.prose a { color: var(--accent); }
+.nav__links a { color: var(--muted); text-decoration: none; }
+.nav__links a:hover { color: var(--text); }
