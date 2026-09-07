@@ -121,6 +121,10 @@
 <body>
   <nav class="nav">
     <a class="nav__brand" href="/">🇫🇷 French Pronounce</a>
+    <div class="nav__links">
+      <a href="/" class="active">Home</a>
+      <a href="/numbers.html">Numbers</a>
+    </div>
   </nav>
 
   <main>
@@ -563,86 +567,8 @@
     &copy; 2026 French Pronounce · Built to make learning easier. · <a href="/privacy.html">Privacy Policy</a>
   </footer>
 
-  <!-- ==========================================================
-       Interactivity. The content above is real HTML (so search
-       engines and AI can read it); this script just makes it clickable.
-       ========================================================== -->
-  <script>
-    // ---- Speech engine setup (Web Speech API, built into the browser) ----
-    var currentRate = 1;
-    var frVoice = null;
-
-    function pickVoice() {
-      var voices = window.speechSynthesis ? speechSynthesis.getVoices() : [];
-      frVoice = null;
-      for (var i = 0; i < voices.length; i++) {
-        if (voices[i].lang && voices[i].lang.toLowerCase().indexOf("fr") === 0) { frVoice = voices[i]; break; }
-      }
-      if (voices.length && !frVoice) {
-        document.getElementById("voiceWarning").hidden = false;
-      }
-    }
-
-    if ("speechSynthesis" in window) {
-      speechSynthesis.onvoiceschanged = pickVoice;
-      pickVoice();
-    } else {
-      var w = document.getElementById("voiceWarning");
-      w.hidden = false;
-      w.textContent = "Your browser doesn’t support speech playback. Try Chrome, Edge, or Safari.";
-    }
-
-    var lastTile = null;
-    function speak(text, tileEl) {
-      if (!("speechSynthesis" in window)) return;
-      speechSynthesis.cancel();
-      var u = new SpeechSynthesisUtterance(text);
-      u.lang = "fr-FR";
-      if (frVoice) u.voice = frVoice;
-      u.rate = currentRate;
-      if (lastTile) lastTile.classList.remove("speaking");
-      if (tileEl) {
-        tileEl.classList.add("speaking");
-        lastTile = tileEl;
-        u.onend = function () { tileEl.classList.remove("speaking"); };
-      }
-      speechSynthesis.speak(u);
-    }
-
-    // ---- Wire up every element that has data-say ----
-    var sayEls = document.querySelectorAll("[data-say]");
-    for (var i = 0; i < sayEls.length; i++) {
-      (function (el) {
-        el.addEventListener("click", function () {
-          var tile = el.closest(".tile");
-          speak(el.getAttribute("data-say"), tile);
-        });
-      })(sayEls[i]);
-    }
-
-    // ---- Tabs ----
-    var tabs = document.querySelectorAll(".tab");
-    for (var t = 0; t < tabs.length; t++) {
-      tabs[t].addEventListener("click", function () {
-        var all = document.querySelectorAll(".tab");
-        for (var k = 0; k < all.length; k++) all[k].classList.remove("active");
-        var panels = document.querySelectorAll(".panel");
-        for (var p = 0; p < panels.length; p++) panels[p].classList.remove("active");
-        this.classList.add("active");
-        document.getElementById(this.getAttribute("data-panel")).classList.add("active");
-      });
-    }
-
-    // ---- Speed buttons ----
-    var pills = document.querySelectorAll(".pill");
-    for (var s = 0; s < pills.length; s++) {
-      pills[s].addEventListener("click", function () {
-        var all = document.querySelectorAll(".pill");
-        for (var k = 0; k < all.length; k++) all[k].classList.remove("active");
-        this.classList.add("active");
-        currentRate = parseFloat(this.getAttribute("data-rate"));
-      });
-    }
-  </script>
+  <!-- Interactivity (shared across pages). Content above is real HTML
+       so search engines and AI can read it; this just makes it clickable. -->
+  <script src="/app.js" defer></script>
 </body>
 </html>
