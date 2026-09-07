@@ -30,13 +30,15 @@ body {
 }
 
 /* ---- Top bar ---- */
+/* 3-column grid: brand on the left, nav links centered, right column
+   left empty for balance so the links sit in the middle of the bar. */
 .nav {
   position: sticky;
   top: 0;
   z-index: 10;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   gap: 1rem;
   padding: 1rem 1.5rem;
   background: rgba(15, 18, 32, 0.9);
@@ -45,6 +47,7 @@ body {
 }
 
 .nav__brand {
+  justify-self: start;
   font-weight: 700;
   font-size: 1.15rem;
   color: var(--text);
@@ -52,6 +55,14 @@ body {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.nav__links { justify-self: center; }
+
+/* On narrow phones, stack the brand above the centered links. */
+@media (max-width: 560px) {
+  .nav { grid-template-columns: 1fr; justify-items: center; gap: 0.6rem; }
+  .nav__brand { justify-self: center; }
 }
 
 /* ---- Page container ---- */
