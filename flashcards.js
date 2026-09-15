@@ -1,35 +1,34 @@
 /* ===========================================================
    flashcards.js — French Pronounce flashcard maker
+   One merged flow per card: see the English → spell the French →
+   reveal the word with pronunciation and instant feedback → next.
    - Paste or upload French words
    - Auto-translate to English (free MyMemory API, best effort)
    - Guess le/la gender from word endings
-   - Swipeable cards with pronunciation + a spelling drill
    Everything runs in the browser; the deck lives in localStorage.
    =========================================================== */
 
 (function () {
   "use strict";
 
-  // ---------- element handles ----------
   var $ = function (id) { return document.getElementById(id); };
   var inputPanel = $("inputPanel"), deckPanel = $("deckPanel");
   var pasteBox = $("pasteBox"), csvFile = $("csvFile"), createBtn = $("createBtn");
   var autoTranslateCb = $("autoTranslate"), guessGenderCb = $("guessGender");
-  var inputMsg = $("inputMsg"), translateStatus = $("translateStatus"), progressEl = $("progress");
-  var cardsMode = $("cardsMode"), spellMode = $("spellMode");
-  var cardEl = $("card"), cardArticle = $("cardArticle"), cardFrench = $("cardFrench"),
-      cardEnglish = $("cardEnglish"), cardSpeak = $("cardSpeak");
-  var prevBtn = $("prevBtn"), nextBtn = $("nextBtn"), flipBtn = $("flipBtn");
+  var inputMsg = $("inputMsg"), translateStatus = $("translateStatus");
+  var progressEl = $("progress"), scoreEl = $("score");
+  var cardEl = $("card"), stageQ = $("stageQ"), stageA = $("stageA");
+  var cardEnglish = $("cardEnglish"), hearHint = $("hearHint"), spellInput = $("spellInput");
+  var checkBtn = $("checkBtn"), revealBtn = $("revealBtn");
+  var cardArticle = $("cardArticle"), cardFrench = $("cardFrench"),
+      cardEnglishSm = $("cardEnglishSm"), cardSpeak = $("cardSpeak"), cardFeedback = $("cardFeedback");
+  var prevBtn = $("prevBtn"), nextBtn = $("nextBtn");
   var shuffleBtn = $("shuffleBtn"), restartBtn = $("restartBtn");
-  var spellEnglish = $("spellEnglish"), spellInput = $("spellInput"), spellHear = $("spellHear"),
-      spellCheck = $("spellCheck"), spellSkip = $("spellSkip"),
-      spellFeedback = $("spellFeedback"), spellScore = $("spellScore");
 
   // ---------- state ----------
-  var deck = [];          // [{fr, en, userEn, gender, genderSource}]
+  var deck = [];   // [{fr, en, userEn, gender, genderSource, _scored, _correct}]
   var idx = 0;
-  var flipped = false;
-  var mode = "cards";
+  var stage = "q"; // "q" | "a"
   var translating = false;
   var autoTranslateOn = true, guessGenderOn = true;
 
@@ -54,11 +53,7 @@
   }
 
   // ---------- helpers ----------
-  function decodeEntities(s) {
-    var t = document.createElement("textarea");
-    t.innerHTML = s;
-    return t.value;
-  }
+  function decodeEntities(s) { var t = document.createElement("textarea"); t.innerHTML = s; return t.value; }
   function norm(s) { return (s || "").trim().toLowerCase().replace(/\s+/g, " "); }
   function stripAccents(s) { return norm(s).normalize("NFD").replace(/[̀-ͯ]/g, ""); }
 
@@ -74,20 +69,18 @@
     return out.map(function (s) { return s.trim().replace(/^"|"$/g, ""); });
   }
 
-  // Guess grammatical gender from the word ending. Approximate!
   var FEM_ENDINGS = ["tion","sion","aison","ison","ité","té","tié","ée","ande","ance","ence",
                      "ette","elle","esse","ère","ere","ie","ine","ure","ude","euse"];
   var MASC_ENDINGS = ["age","ment","eau","isme","ail","ier","in","on","eur","oir","ou","al","if","er","o"];
   function guessGender(word) {
     var w = word.toLowerCase();
-    if (w.indexOf(" ") !== -1 || w.length < 2) return null; // phrases: skip
+    if (w.indexOf(" ") !== -1 || w.length < 2) return null;
     var i;
     for (i = 0; i < FEM_ENDINGS.length; i++) if (w.slice(-FEM_ENDINGS[i].length) === FEM_ENDINGS[i]) return "f";
     for (i = 0; i < MASC_ENDINGS.length; i++) if (w.slice(-MASC_ENDINGS[i].length) === MASC_ENDINGS[i]) return "m";
     return null;
   }
 
-  // Detect and strip a leading article, returning {base, gender}
   function stripArticle(fr) {
     var m = fr.match(/^(l['’]|le |la |les |un |une |des |du )\s*/i);
     if (!m) return { base: fr, gender: null };
@@ -96,7 +89,6 @@
     var gender = null;
     if (art === "le" || art === "un" || art === "du") gender = "m";
     else if (art === "la" || art === "une") gender = "f";
-    // l', les, des => plural/elided, gender unknown
     return { base: base || fr, gender: gender };
   }
 
@@ -105,7 +97,6 @@
     return w === "french" || w === "word" || w === "mot" || w === "words" || w === "français";
   }
 
-  // Build card objects from pasted/CSV text
   function buildCards(text) {
     var lines = text.split(/\r?\n/);
     var seen = {}, cards = [];
@@ -125,14 +116,11 @@
       if (!fr) continue;
       var en = parts[1] || "";
       var genderCol = (parts[2] || "").trim().toLowerCase();
+      if (isHeaderLine(fr)) continue;
 
-      if (isHeaderLine(fr)) continue; // skip a CSV header row
-
-      // pull gender/base out of a leading article
       var sa = stripArticle(fr);
       fr = sa.base;
       var gender = null, genderSource = null;
-
       if (genderCol) {
         if (genderCol[0] === "m") { gender = "m"; genderSource = "user"; }
         else if (genderCol[0] === "f") { gender = "f"; genderSource = "user"; }
@@ -146,20 +134,15 @@
       var key = fr.toLowerCase();
       if (seen[key]) continue;
       seen[key] = true;
-
       cards.push({ fr: fr, en: en, userEn: !!en, gender: gender, genderSource: genderSource });
-      if (cards.length >= 1000) break; // safety cap
+      if (cards.length >= 1000) break;
     }
     return cards;
   }
 
-  // ---------- article display ----------
   function articleInfo(card) {
     if (!card.gender) return { text: "", est: false };
-    // if it's clearly a verb ("to ...") and gender was only guessed, don't show an article
-    if (card.genderSource === "guess" && card.en && /^to\s/i.test(card.en.trim())) {
-      return { text: "", est: false };
-    }
+    if (card.genderSource === "guess" && card.en && /^to\s/i.test(card.en.trim())) return { text: "", est: false };
     var startsVowel = /^[aeiouyàâäéèêëîïôöûü]/i.test(card.fr) || /^h/i.test(card.fr);
     var def, indef;
     if (card.gender === "m") { def = startsVowel ? "l'" : "le"; indef = "un"; }
@@ -175,13 +158,12 @@
               "&langpair=fr|en&de=frenchpronounce70@gmail.com";
     return fetch(url).then(function (r) { return r.json(); }).then(function (data) {
       var en = (data && data.responseData && data.responseData.translatedText) || "";
-      if (/MYMEMORY WARNING|YOU USED ALL|INVALID|QUOTA/i.test(en)) { var err = new Error("limit"); throw err; }
+      if (/MYMEMORY WARNING|YOU USED ALL|INVALID|QUOTA/i.test(en)) throw new Error("limit");
       en = decodeEntities(en).trim();
       try { localStorage.setItem(cacheKey, en); } catch (e2) {}
       return en;
     });
   }
-
   function sleep(ms) { return new Promise(function (res) { setTimeout(res, ms); }); }
 
   function runTranslations() {
@@ -191,8 +173,7 @@
     translateStatus.hidden = false;
     var total = pending.length, done = 0, failed = 0, stop = false;
     var update = function () {
-      translateStatus.textContent = "Translating " + done + " / " + total +
-        (failed ? (" · " + failed + " failed") : "");
+      translateStatus.textContent = "Translating " + done + " / " + total + (failed ? (" · " + failed + " failed") : "");
     };
     update();
     var queue = pending.slice();
@@ -200,24 +181,20 @@
       return (function loop() {
         if (!queue.length || stop) return Promise.resolve();
         var c = queue.shift();
-        return translateWord(c.fr).then(function (en) {
-          c.en = en;
-        }).catch(function (e) {
-          failed++;
-          if (e && e.message === "limit") stop = true;
-        }).then(function () {
-          done++; update();
-          if (deck[idx] === c && mode === "cards") render();
-          saveDeck();
-          return sleep(140);
-        }).then(loop);
+        return translateWord(c.fr).then(function (en) { c.en = en; })
+          .catch(function (e) { failed++; if (e && e.message === "limit") stop = true; })
+          .then(function () {
+            done++; update();
+            if (deck[idx] === c) refreshTexts();
+            saveDeck();
+            return sleep(140);
+          }).then(loop);
       })();
     };
     var workers = [];
     for (var i = 0; i < 4; i++) workers.push(worker());
     Promise.all(workers).then(function () {
-      translating = false;
-      saveDeck();
+      translating = false; saveDeck();
       if (stop) {
         translateStatus.hidden = false;
         translateStatus.textContent = "Auto-translate hit its free daily limit. Some meanings are blank — " +
@@ -225,45 +202,94 @@
       } else if (failed) {
         translateStatus.hidden = false;
         translateStatus.textContent = failed + " word(s) couldn’t be translated.";
-      } else {
-        translateStatus.hidden = true;
-      }
+      } else { translateStatus.hidden = true; }
     });
   }
 
   // ---------- persistence ----------
   function saveDeck() { try { localStorage.setItem("fp_deck", JSON.stringify(deck)); } catch (e) {} }
-  function loadDeck() {
-    try { var s = localStorage.getItem("fp_deck"); return s ? JSON.parse(s) : null; } catch (e) { return null; }
+  function loadDeck() { try { var s = localStorage.getItem("fp_deck"); return s ? JSON.parse(s) : null; } catch (e) { return null; } }
+
+  // ---------- rendering ----------
+  function promptText(card) { return card.en ? card.en : "🔊 listen and spell"; }
+
+  function refreshTexts() {
+    // update the current card's texts without disturbing the input/stage
+    var c = deck[idx];
+    if (!c) return;
+    cardEnglish.textContent = promptText(c);
+    cardEnglishSm.textContent = c.en || "";
   }
 
-  // ---------- card rendering ----------
-  function render() {
+  function updateScore() {
+    var attempted = 0, correct = 0;
+    for (var i = 0; i < deck.length; i++) { if (deck[i]._scored) { attempted++; if (deck[i]._correct) correct++; } }
+    scoreEl.textContent = attempted ? ("Score: " + correct + " / " + attempted) : "";
+  }
+
+  function showStage(s) {
+    stage = s;
+    stageQ.hidden = (s !== "q");
+    stageA.hidden = (s !== "a");
+  }
+
+  function renderCard() {
     if (!deck.length) return;
     if (idx < 0) idx = 0;
     if (idx >= deck.length) idx = deck.length - 1;
     var c = deck[idx];
+
+    // question stage
+    cardEnglish.textContent = promptText(c);
+    spellInput.value = "";
+    checkBtn.textContent = "Check";
+
+    // answer stage (pre-filled so reveal is instant)
     var ai = articleInfo(c);
     cardArticle.textContent = ai.text + (ai.est ? "  ?" : "");
     cardArticle.classList.toggle("is-est", ai.est);
     cardArticle.title = ai.est ? "Gender estimated from the word ending — may be wrong" : "";
     cardFrench.textContent = c.fr;
-    cardEnglish.textContent = c.en ? c.en : (translating ? "translating…" : "— (no translation)");
-    flipped = false;
-    cardEl.classList.remove("flipped");
+    cardEnglishSm.textContent = c.en || "";
+    cardFeedback.textContent = "";
+    cardFeedback.className = "fc-card__feedback";
+
+    showStage("q");
     progressEl.textContent = (idx + 1) + " / " + deck.length;
+    updateScore();
   }
 
-  function flip() { flipped = !flipped; cardEl.classList.toggle("flipped", flipped); }
+  function grade() {
+    var c = deck[idx];
+    var guess = norm(spellInput.value);
+    var exact = guess && guess === norm(c.fr);
+    var accentOnly = guess && !exact && stripAccents(guess) === stripAccents(c.fr);
 
+    if (!c._scored && guess) { c._scored = true; c._correct = !!exact; saveDeck(); }
+
+    if (!guess) { cardFeedback.textContent = "You didn’t type an answer — the word was:"; cardFeedback.className = "fc-card__feedback bad"; }
+    else if (exact) { cardFeedback.textContent = "✅ Correct!"; cardFeedback.className = "fc-card__feedback ok"; }
+    else if (accentOnly) { cardFeedback.textContent = "➖ Almost — mind the accents."; cardFeedback.className = "fc-card__feedback warn"; }
+    else { cardFeedback.textContent = "❌ Not quite — the answer:"; cardFeedback.className = "fc-card__feedback bad"; }
+
+    showStage("a");
+    updateScore();
+  }
+
+  function reveal() {
+    var c = deck[idx];
+    if (!c._scored) { cardFeedback.textContent = ""; cardFeedback.className = "fc-card__feedback"; }
+    showStage("a");
+  }
+
+  // ---------- navigation ----------
   var suppressClick = false;
   function animateSwap(dir, changeFn) {
     cardEl.style.transition = "transform .16s ease, opacity .16s ease";
     cardEl.style.transform = "translateX(" + (dir < 0 ? -40 : 40) + "px)";
     cardEl.style.opacity = "0";
     setTimeout(function () {
-      changeFn();
-      render();
+      changeFn(); renderCard();
       cardEl.style.transition = "none";
       cardEl.style.transform = "translateX(" + (dir < 0 ? 40 : -40) + "px)";
       requestAnimationFrame(function () {
@@ -277,93 +303,19 @@
   function prev() { if (deck.length) animateSwap(1, function () { idx = (idx - 1 + deck.length) % deck.length; }); }
 
   // ---------- panels ----------
-  function showDeck() {
-    inputPanel.hidden = true;
-    deckPanel.hidden = false;
-  }
-  function showInput() {
-    deckPanel.hidden = true;
-    inputPanel.hidden = false;
-  }
-
-  function setMode(m) {
-    mode = m;
-    var pills = document.querySelectorAll(".fc-modes .pill");
-    for (var i = 0; i < pills.length; i++) pills[i].classList.toggle("active", pills[i].getAttribute("data-mode") === m);
-    cardsMode.hidden = (m !== "cards");
-    spellMode.hidden = (m !== "spell");
-    progressEl.hidden = (m !== "cards"); // the "3 / 8" counter is only for Cards
-    if (m === "cards") render();
-    else spellStart();
-  }
-
-  // ---------- spelling drill ----------
-  var sIdx = 0, sScore = 0, sTotal = 0, sAnswered = false;
-  function spellStart() { sIdx = 0; sScore = 0; sTotal = 0; nextSpell(); }
-  function nextSpell() {
-    sAnswered = false;
-    spellInput.value = "";
-    spellFeedback.hidden = true;
-    spellCheck.textContent = "Check";
-    if (sIdx >= deck.length) { finishSpell(); return; }
-    var c = deck[sIdx];
-    spellEnglish.textContent = c.en ? c.en : "(no meaning — use “Hear it”)";
-    spellScore.textContent = sTotal ? ("Score: " + sScore + " / " + sTotal) : ("0 / " + deck.length);
-    spellInput.disabled = false;
-    spellInput.focus();
-  }
-  function fb(msg, cls) {
-    spellFeedback.hidden = false;
-    spellFeedback.textContent = msg;
-    spellFeedback.className = "fc-spell__feedback " + cls;
-  }
-  function checkSpell() {
-    if (sIdx >= deck.length) { spellStart(); return; }
-    if (sAnswered) { sIdx++; nextSpell(); return; }
-    var c = deck[sIdx];
-    var guess = norm(spellInput.value);
-    if (!guess) return;
-    sTotal++;
-    if (guess === norm(c.fr)) { sScore++; fb("✅ Correct!", "ok"); }
-    else if (stripAccents(guess) === stripAccents(c.fr)) { fb("➖ Almost — mind the accents: " + c.fr, "warn"); }
-    else { fb("❌ Answer: " + c.fr, "bad"); }
-    sAnswered = true;
-    spellCheck.textContent = "Next →";
-    spellScore.textContent = "Score: " + sScore + " / " + sTotal;
-  }
-  function skipSpell() {
-    if (sIdx >= deck.length) return;
-    var c = deck[sIdx];
-    if (!sAnswered) { sTotal++; }
-    fb("Answer: " + c.fr, "bad");
-    sAnswered = true;
-    spellCheck.textContent = "Next →";
-  }
-  function finishSpell() {
-    spellEnglish.textContent = "All done! 🎉";
-    spellInput.value = "";
-    spellInput.disabled = true;
-    fb("Final score: " + sScore + " / " + sTotal, sScore >= sTotal / 2 ? "ok" : "warn");
-    spellCheck.textContent = "Restart";
-    spellScore.textContent = "";
-  }
+  function showDeck() { inputPanel.hidden = true; deckPanel.hidden = false; }
+  function showInput() { deckPanel.hidden = true; inputPanel.hidden = false; }
 
   // ---------- events ----------
   createBtn.addEventListener("click", function () {
     autoTranslateOn = autoTranslateCb.checked;
     guessGenderOn = guessGenderCb.checked;
     var cards = buildCards(pasteBox.value || "");
-    if (!cards.length) {
-      inputMsg.hidden = false;
-      inputMsg.textContent = "Please paste at least one French word first.";
-      return;
-    }
+    if (!cards.length) { inputMsg.hidden = false; inputMsg.textContent = "Please paste at least one French word first."; return; }
     inputMsg.hidden = true;
     deck = cards; idx = 0;
-    saveDeck();
-    showDeck();
-    setMode("cards");
-    runTranslations();
+    saveDeck(); showDeck(); renderCard(); runTranslations();
+    spellInput.focus();
   });
 
   csvFile.addEventListener("change", function (e) {
@@ -378,65 +330,54 @@
     reader.readAsText(f);
   });
 
-  cardSpeak.addEventListener("click", function (e) { e.stopPropagation(); if (deck[idx]) speak(deck[idx].fr); });
-  flipBtn.addEventListener("click", flip);
+  checkBtn.addEventListener("click", function () {
+    if (stage === "a") { next(); return; } // acts as "Next" once revealed
+    grade();
+  });
+  revealBtn.addEventListener("click", reveal);
+  hearHint.addEventListener("click", function () { if (deck[idx]) speak(deck[idx].fr); });
+  cardSpeak.addEventListener("click", function () { if (deck[idx]) speak(deck[idx].fr); });
   nextBtn.addEventListener("click", next);
   prevBtn.addEventListener("click", prev);
+
+  spellInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") { e.preventDefault(); if (stage === "q") grade(); else next(); }
+  });
 
   shuffleBtn.addEventListener("click", function () {
     for (var i = deck.length - 1; i > 0; i--) {
       var j = Math.floor(Math.random() * (i + 1));
       var tmp = deck[i]; deck[i] = deck[j]; deck[j] = tmp;
     }
-    idx = 0; saveDeck();
-    if (mode === "cards") render(); else spellStart();
+    idx = 0; saveDeck(); renderCard(); spellInput.focus();
   });
   restartBtn.addEventListener("click", function () {
-    deck = []; idx = 0; saveDeck();
-    pasteBox.value = "";
-    showInput();
+    deck = []; idx = 0; saveDeck(); pasteBox.value = ""; showInput();
   });
 
-  // card tap / swipe
-  cardEl.addEventListener("click", function () { if (suppressClick) return; flip(); });
+  // swipe on the card
   var tsx = 0, tsy = 0;
   cardEl.addEventListener("touchstart", function (e) { var t = e.touches[0]; tsx = t.clientX; tsy = t.clientY; }, { passive: true });
   cardEl.addEventListener("touchend", function (e) {
     var t = e.changedTouches[0], dx = t.clientX - tsx, dy = t.clientY - tsy;
-    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) {
       if (dx < 0) next(); else prev();
-      suppressClick = true; setTimeout(function () { suppressClick = false; }, 400);
     }
   }, { passive: true });
 
-  // mode pills
-  var modePills = document.querySelectorAll(".fc-modes .pill");
-  for (var i = 0; i < modePills.length; i++) {
-    modePills[i].addEventListener("click", function () { setMode(this.getAttribute("data-mode")); });
-  }
-
-  // spelling events
-  spellHear.addEventListener("click", function () { if (deck[sIdx]) speak(deck[sIdx].fr); });
-  spellCheck.addEventListener("click", checkSpell);
-  spellSkip.addEventListener("click", skipSpell);
-  spellInput.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); checkSpell(); } });
-
-  // keyboard nav (cards mode)
+  // keyboard: arrows move between cards (but not while typing in the input)
   document.addEventListener("keydown", function (e) {
-    if (deckPanel.hidden || mode !== "cards") return;
+    if (deckPanel.hidden) return;
     var tag = (document.activeElement && document.activeElement.tagName) || "";
     if (tag === "INPUT" || tag === "TEXTAREA") return;
     if (e.key === "ArrowRight") next();
     else if (e.key === "ArrowLeft") prev();
-    else if (e.key === " ") { e.preventDefault(); flip(); }
   });
 
-  // ---------- init: restore a saved deck if present ----------
+  // ---------- init ----------
   var saved = loadDeck();
   if (saved && saved.length) {
     deck = saved; idx = 0;
-    showDeck();
-    setMode("cards");
-    runTranslations(); // fill any that are still missing
+    showDeck(); renderCard(); runTranslations();
   }
 })();

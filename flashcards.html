@@ -82,9 +82,9 @@
     <!-- ===== DECK PANEL ===== -->
     <section id="deckPanel" hidden>
       <div class="fc-toolbar">
-        <div class="fc-modes">
-          <button class="pill active" data-mode="cards" type="button">Cards</button>
-          <button class="pill" data-mode="spell" type="button">Spelling</button>
+        <div class="fc-progress-wrap">
+          <span id="progress" class="fc-progress"></span>
+          <span id="score" class="fc-score"></span>
         </div>
         <div class="fc-actions">
           <button id="shuffleBtn" class="btn btn--ghost" type="button">🔀 Shuffle</button>
@@ -92,56 +92,43 @@
         </div>
       </div>
 
-      <p id="progress" class="fc-progress"></p>
       <div id="translateStatus" class="fc-translate" hidden></div>
 
-      <!-- CARDS MODE -->
-      <div id="cardsMode">
-        <div id="card" class="fc-card" role="button" tabindex="0" aria-label="Flashcard, tap to flip">
-          <div class="fc-card__inner">
-            <div class="fc-card__face fc-card__front">
-              <span id="cardArticle" class="fc-card__article"></span>
-              <span id="cardFrench" class="fc-card__french" lang="fr"></span>
-              <button id="cardSpeak" class="btn btn--ghost" type="button">🔊 Hear it</button>
-              <span class="fc-card__fliphint">tap to flip</span>
-            </div>
-            <div class="fc-card__face fc-card__back">
-              <span id="cardEnglish" class="fc-card__english"></span>
-              <span class="fc-card__fliphint">tap to flip back</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="fc-nav">
-          <button id="prevBtn" class="btn btn--ghost" type="button">← Prev</button>
-          <button id="flipBtn" class="btn" type="button">Flip</button>
-          <button id="nextBtn" class="btn btn--ghost" type="button">Next →</button>
-        </div>
-        <p class="fc-tip">Swipe left/right on the card, or use ← → arrow keys. Press Space to flip.</p>
-      </div>
-
-      <!-- SPELLING MODE -->
-      <div id="spellMode" hidden>
-        <div class="fc-spell">
-          <p class="fc-spell__prompt">Type the French for:</p>
-          <p id="spellEnglish" class="fc-spell__english"></p>
-          <button id="spellHear" class="btn btn--ghost" type="button">🔊 Hear it</button>
+      <div id="card" class="fc-card">
+        <!-- Question stage: recall & spell -->
+        <div id="stageQ" class="fc-stage">
+          <span class="fc-stage__label">Spell the French for</span>
+          <span id="cardEnglish" class="fc-stage__english"></span>
+          <button id="hearHint" class="btn btn--ghost" type="button">🔊 Hear it</button>
           <input id="spellInput" type="text" lang="fr" autocomplete="off"
                  autocapitalize="off" spellcheck="false" placeholder="type the French word…" />
-          <div class="fc-spell__actions">
-            <button id="spellCheck" class="btn" type="button">Check</button>
-            <button id="spellSkip" class="btn btn--ghost" type="button">Skip / reveal</button>
+          <div class="fc-stage__actions">
+            <button id="checkBtn" class="btn" type="button">Check</button>
+            <button id="revealBtn" class="btn btn--ghost" type="button">Reveal</button>
           </div>
-          <p id="spellFeedback" class="fc-spell__feedback" hidden></p>
-          <p id="spellScore" class="fc-spell__score"></p>
+        </div>
+
+        <!-- Answer stage: reveal & pronounce -->
+        <div id="stageA" class="fc-stage" hidden>
+          <span id="cardArticle" class="fc-card__article"></span>
+          <span id="cardFrench" class="fc-card__french" lang="fr"></span>
+          <span id="cardEnglishSm" class="fc-card__english-sm"></span>
+          <button id="cardSpeak" class="btn btn--ghost" type="button">🔊 Hear it</button>
+          <p id="cardFeedback" class="fc-card__feedback"></p>
         </div>
       </div>
+
+      <div class="fc-nav">
+        <button id="prevBtn" class="btn btn--ghost" type="button">← Prev</button>
+        <button id="nextBtn" class="btn" type="button">Next →</button>
+      </div>
+      <p class="fc-tip">Type your answer and press Enter, or hit Reveal. Swipe or use ← → to move between cards.</p>
     </section>
 
     <!-- ===== Readable content for humans, search engines, and AI ===== -->
     <section class="prose">
       <h2>How the French flashcard maker works</h2>
-      <p>Paste a list of French words (or upload a <code>.csv</code>), one per line, and press <strong>Create flashcards</strong>. Each word becomes a card you can flip to see its English meaning, hear pronounced aloud, and swipe through like a deck. Switch to <strong>Spelling</strong> mode to test whether you can write each word from its meaning. Everything runs in your browser and your list is kept only on your device.</p>
+      <p>Paste a list of French words (or upload a <code>.csv</code>), one per line, and press <strong>Create flashcards</strong>. Each card shows the English meaning and asks you to spell the French — type your answer and press Enter (or hit <strong>Reveal</strong>) to see the word, hear it pronounced, and get instant feedback. Then swipe to the next card. Everything runs in your browser and your list is kept only on your device.</p>
 
       <h2>About the translations</h2>
       <p>English meanings are filled in automatically using a free translation service, so treat them as a helpful guide rather than a dictionary — machine translation can miss context, and grammatical gender (le/la) is estimated from the word ending. For exact meanings, you can type your own English after each word (for example <span lang="fr">canard</span><code>, duck</code>).</p>
@@ -158,7 +145,7 @@
         </details>
         <details>
           <summary>Can I practise spelling?</summary>
-          <p>Yes. Switch to <strong>Spelling</strong> mode and type the French word from its English meaning (you can also hear it first). We tell you if you’re correct, and flag when only the accents are off.</p>
+          <p>Yes — spelling is built into every card. You type the French word from its English meaning (and can hear it first). We tell you if you’re correct, and flag when only the accents are off, then reveal the word.</p>
         </details>
         <details>
           <summary>Why is the le/la sometimes wrong?</summary>

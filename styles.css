@@ -20,6 +20,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 
 body {
   margin: 0;
@@ -381,45 +382,43 @@ footer a { color: var(--accent); }
   margin-bottom: 1rem;
 }
 
-/* The card itself (3D flip) */
+/* Score next to the progress counter */
+.fc-progress-wrap { display: flex; align-items: baseline; gap: 0.85rem; }
+.fc-score { color: var(--muted); font-size: 0.9rem; }
+
+/* The card: one box that swaps between a question and answer stage */
 .fc-card {
-  max-width: 460px;
+  max-width: 480px;
   margin: 0 auto;
-  height: 260px;
-  perspective: 1200px;
-  cursor: pointer;
-  outline: none;
-}
-.fc-card__inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.5s;
-  transform-style: preserve-3d;
-}
-.fc-card.flipped .fc-card__inner { transform: rotateY(180deg); }
-.fc-card__face {
-  position: absolute;
-  inset: 0;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
+  min-height: 300px;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  padding: 1.5rem;
+  padding: 1.75rem 1.5rem;
   text-align: center;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
-.fc-card__back { transform: rotateY(180deg); background: var(--surface-2); }
+.fc-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  width: 100%;
+}
+.fc-stage__label { color: var(--muted); font-size: 0.95rem; }
+.fc-stage__english { font-size: 1.9rem; font-weight: 700; line-height: 1.15; }
+.fc-stage__actions { display: flex; gap: 0.6rem; }
+
 .fc-card__article { color: var(--accent); font-size: 1.05rem; font-weight: 600; }
 .fc-card__article.is-est { color: var(--muted); }
-.fc-card__french { font-size: 2.2rem; font-weight: 700; line-height: 1.15; }
-.fc-card__english { font-size: 1.8rem; font-weight: 600; }
-.fc-card__fliphint { color: var(--muted); font-size: 0.8rem; margin-top: 0.25rem; }
+.fc-card__french { font-size: 2.3rem; font-weight: 700; line-height: 1.15; }
+.fc-card__english-sm { color: var(--muted); font-size: 1.1rem; }
+.fc-card__feedback { font-weight: 600; margin: 0.25rem 0 0; min-height: 1.2em; }
+.fc-card__feedback.ok { color: #7ee0a0; }
+.fc-card__feedback.warn { color: #ffd79a; }
+.fc-card__feedback.bad { color: #ff9a9a; }
 
 .fc-nav {
   display: flex;
