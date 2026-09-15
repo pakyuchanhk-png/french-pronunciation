@@ -295,3 +295,174 @@ footer a { color: var(--accent); }
 .grid--nums { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
 .tile__num { font-size: 1.6rem; font-weight: 700; color: var(--accent); line-height: 1.1; }
 .tile__word { font-size: 1.15rem; font-weight: 600; color: var(--text); }
+
+/* ===========================================================
+   Buttons (shared)
+   =========================================================== */
+.btn {
+  display: inline-block;
+  background: var(--accent-strong);
+  color: #fff;
+  border: 1px solid var(--accent-strong);
+  border-radius: 10px;
+  padding: 0.65rem 1.3rem;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn:hover { background: var(--accent); border-color: var(--accent); }
+.btn--ghost {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn--ghost:hover { background: var(--surface-2); border-color: var(--accent); }
+
+/* ===========================================================
+   Flashcards
+   =========================================================== */
+.fc-input {
+  max-width: 640px;
+  margin: 0 auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+.fc-label { display: block; font-weight: 600; margin-bottom: 0.5rem; }
+#pasteBox {
+  width: 100%;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.8rem;
+  font: inherit;
+  resize: vertical;
+}
+#pasteBox:focus { outline: 2px solid var(--accent); border-color: transparent; }
+.fc-help { color: var(--muted); font-size: 0.85rem; margin: 0.6rem 0 1rem; }
+.fc-help code, .prose code {
+  background: var(--surface-2);
+  padding: 0.1rem 0.35rem;
+  border-radius: 5px;
+  font-size: 0.9em;
+}
+.fc-input__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+.fc-check { color: var(--muted); font-size: 0.9rem; display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer; }
+.fc-file { cursor: pointer; }
+.fc-msg { color: var(--accent); font-size: 0.9rem; margin-top: 0.75rem; }
+
+.fc-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.fc-modes { display: flex; gap: 0.5rem; }
+.fc-actions { display: flex; gap: 0.5rem; }
+.fc-progress { text-align: center; color: var(--muted); font-size: 0.9rem; margin: 0.25rem 0 1rem; }
+.fc-translate {
+  text-align: center;
+  color: #ffd79a;
+  background: #3a2a12;
+  border: 1px solid #6b4e1f;
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+/* The card itself (3D flip) */
+.fc-card {
+  max-width: 460px;
+  margin: 0 auto;
+  height: 260px;
+  perspective: 1200px;
+  cursor: pointer;
+  outline: none;
+}
+.fc-card__inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s;
+  transform-style: preserve-3d;
+}
+.fc-card.flipped .fc-card__inner { transform: rotateY(180deg); }
+.fc-card__face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.fc-card__back { transform: rotateY(180deg); background: var(--surface-2); }
+.fc-card__article { color: var(--accent); font-size: 1.05rem; font-weight: 600; }
+.fc-card__article.is-est { color: var(--muted); }
+.fc-card__french { font-size: 2.2rem; font-weight: 700; line-height: 1.15; }
+.fc-card__english { font-size: 1.8rem; font-weight: 600; }
+.fc-card__fliphint { color: var(--muted); font-size: 0.8rem; margin-top: 0.25rem; }
+
+.fc-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1.25rem 0 0.5rem;
+}
+.fc-tip { text-align: center; color: var(--muted); font-size: 0.85rem; }
+
+/* Spelling drill */
+.fc-spell {
+  max-width: 460px;
+  margin: 0 auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.75rem 1.5rem;
+  text-align: center;
+}
+.fc-spell__prompt { color: var(--muted); margin: 0 0 0.25rem; }
+.fc-spell__english { font-size: 1.6rem; font-weight: 700; margin: 0 0 1rem; }
+#spellInput {
+  width: 100%;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.75rem 0.9rem;
+  font: inherit;
+  font-size: 1.1rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+#spellInput:focus { outline: 2px solid var(--accent); border-color: transparent; }
+.fc-spell__actions { display: flex; justify-content: center; gap: 0.6rem; }
+.fc-spell__feedback { margin: 1rem 0 0; font-weight: 600; }
+.fc-spell__feedback.ok { color: #7ee0a0; }
+.fc-spell__feedback.warn { color: #ffd79a; }
+.fc-spell__feedback.bad { color: #ff9a9a; }
+.fc-spell__score { color: var(--muted); font-size: 0.9rem; margin: 0.75rem 0 0; }
+
+@media (max-width: 560px) {
+  .fc-card__french { font-size: 1.9rem; }
+  .fc-card__english { font-size: 1.5rem; }
+}
