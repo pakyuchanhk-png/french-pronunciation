@@ -33,6 +33,31 @@
   var translating = false;
   var autoTranslateOn = true, guessGenderOn = true;
 
+  // ---------- built-in dictionary (common words: gender + meaning) ----------
+  // Loaded once; used before the online translator. Data from Wiktionary
+  // (kaikki.org) and Lexique, under CC BY-SA.
+  var DICT = null;
+  var dictReady = fetch("/dict.json")
+    .then(function (r) { return r.ok ? r.json() : {}; })
+    .then(function (j) { DICT = j; return j; })
+    .catch(function () { DICT = {}; return {}; });
+
+  function applyDict(cards) {
+    if (!DICT) return;
+    for (var i = 0; i < cards.length; i++) {
+      var c = cards[i], d = DICT[c.fr.toLowerCase()];
+      if (!d) continue;
+      if (!c.userEn && d.e) c.en = d.e;
+      if (!c.gender && d.g) { c.gender = d.g; c.genderSource = "dict"; }
+    }
+  }
+  function applyGuess(cards) {
+    for (var i = 0; i < cards.length; i++) {
+      var c = cards[i];
+      if (!c.gender) { var g = guessGender(c.fr); if (g) { c.gender = g; c.genderSource = "guess"; } }
+    }
+  }
+
   // ---------- speech ----------
   var frVoice = null;
   function pickVoice() {
@@ -127,10 +152,7 @@
         else if (genderCol[0] === "f") { gender = "f"; genderSource = "user"; }
       }
       if (!gender && sa.gender) { gender = sa.gender; genderSource = "user"; }
-      if (!gender && guessGenderOn) {
-        var g = guessGender(fr);
-        if (g) { gender = g; genderSource = "guess"; }
-      }
+      // Dictionary + ending-guess are applied later (once the dictionary loads).
 
       var key = fr.toLowerCase();
       if (seen[key]) continue;
@@ -322,7 +344,12 @@
     if (!cards.length) { inputMsg.hidden = false; inputMsg.textContent = "Please paste at least one French word first."; return; }
     inputMsg.hidden = true;
     deck = cards; idx = 0;
-    saveDeck(); showDeck(); renderCard(); runTranslations();
+    saveDeck(); showDeck(); renderCard();
+    dictReady.then(function () {
+      applyDict(deck);
+      if (guessGenderOn) applyGuess(deck);
+      saveDeck(); renderCard(); runTranslations();
+    });
     spellInput.focus();
   });
 
@@ -387,6 +414,10 @@
   var saved = loadDeck();
   if (saved && saved.length) {
     deck = saved; idx = 0;
-    showDeck(); renderCard(); runTranslations();
+    showDeck(); renderCard();
+    dictReady.then(function () {
+      applyDict(deck);
+      saveDeck(); renderCard(); runTranslations();
+    });
   }
 })();

@@ -237,6 +237,7 @@ button.tile:active { transform: scale(0.97); }
 }
 .prose p { color: var(--muted); }
 .prose [lang="fr"] { color: var(--text); }
+.fc-credit { font-size: 0.82rem; opacity: 0.8; }
 
 .faq { margin-top: 0.75rem; }
 .faq details {
