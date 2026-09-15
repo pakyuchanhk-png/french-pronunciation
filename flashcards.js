@@ -21,7 +21,8 @@
   var cardEnglish = $("cardEnglish"), hearHint = $("hearHint"), spellInput = $("spellInput");
   var checkBtn = $("checkBtn"), revealBtn = $("revealBtn");
   var cardArticle = $("cardArticle"), cardFrench = $("cardFrench"),
-      cardEnglishSm = $("cardEnglishSm"), cardSpeak = $("cardSpeak"), cardFeedback = $("cardFeedback");
+      cardEnglishSm = $("cardEnglishSm"), cardSpeak = $("cardSpeak"), cardFeedback = $("cardFeedback"),
+      backBtn = $("backBtn");
   var prevBtn = $("prevBtn"), nextBtn = $("nextBtn");
   var shuffleBtn = $("shuffleBtn"), restartBtn = $("restartBtn");
 
@@ -282,6 +283,13 @@
     showStage("a");
   }
 
+  // Return from the reveal to the spelling input for the same card
+  function backToSpelling() {
+    checkBtn.textContent = "Check";
+    showStage("q");
+    spellInput.focus();
+  }
+
   // ---------- navigation ----------
   var suppressClick = false;
   function animateSwap(dir, changeFn) {
@@ -335,6 +343,7 @@
     grade();
   });
   revealBtn.addEventListener("click", reveal);
+  backBtn.addEventListener("click", backToSpelling);
   hearHint.addEventListener("click", function () { if (deck[idx]) speak(deck[idx].fr); });
   cardSpeak.addEventListener("click", function () { if (deck[idx]) speak(deck[idx].fr); });
   nextBtn.addEventListener("click", next);

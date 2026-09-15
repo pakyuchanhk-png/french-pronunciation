@@ -82,14 +82,12 @@
     <!-- ===== DECK PANEL ===== -->
     <section id="deckPanel" hidden>
       <div class="fc-toolbar">
+        <button id="restartBtn" class="btn fc-newlist" type="button">＋ New list</button>
         <div class="fc-progress-wrap">
           <span id="progress" class="fc-progress"></span>
           <span id="score" class="fc-score"></span>
         </div>
-        <div class="fc-actions">
-          <button id="shuffleBtn" class="btn btn--ghost" type="button">🔀 Shuffle</button>
-          <button id="restartBtn" class="btn btn--ghost" type="button">New list</button>
-        </div>
+        <button id="shuffleBtn" class="btn btn--ghost" type="button">🔀 Shuffle</button>
       </div>
 
       <div id="translateStatus" class="fc-translate" hidden></div>
@@ -113,8 +111,11 @@
           <span id="cardArticle" class="fc-card__article"></span>
           <span id="cardFrench" class="fc-card__french" lang="fr"></span>
           <span id="cardEnglishSm" class="fc-card__english-sm"></span>
-          <button id="cardSpeak" class="btn btn--ghost" type="button">🔊 Hear it</button>
           <p id="cardFeedback" class="fc-card__feedback"></p>
+          <div class="fc-stage__actions">
+            <button id="cardSpeak" class="btn btn--ghost" type="button">🔊 Hear it</button>
+            <button id="backBtn" class="btn btn--ghost" type="button">↩ Back to spelling</button>
+          </div>
         </div>
       </div>
 

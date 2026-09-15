@@ -386,6 +386,15 @@ footer a { color: var(--accent); }
 .fc-progress-wrap { display: flex; align-items: baseline; gap: 0.85rem; }
 .fc-score { color: var(--muted); font-size: 0.9rem; }
 
+/* "New list" — outlined accent so newcomers can find it, but not so loud
+   it gets clicked by accident instead of the main action. */
+.fc-newlist {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+.fc-newlist:hover { background: var(--surface-2); border-color: var(--accent); }
+
 /* The card: one box that swaps between a question and answer stage */
 .fc-card {
   max-width: 480px;
