@@ -165,6 +165,9 @@ button.tile:active { transform: scale(0.97); }
 .tile__grapheme { font-size: 1.6rem; font-weight: 700; line-height: 1.1; }
 .tile__ipa { color: var(--accent); font-size: 0.95rem; }
 .tile__hint { color: var(--muted); font-size: 0.85rem; }
+/* Liaison examples: green = links, red = never link */
+.tile--no .tile__ipa { color: #ff9a9a; }
+.tile--no .tile__grapheme { color: var(--muted); }
 
 /* The two play buttons inside a combo tile */
 .tile__actions {
