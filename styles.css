@@ -169,6 +169,34 @@ button.tile:active { transform: scale(0.97); }
 .tile--no .tile__ipa { color: #ff9a9a; }
 .tile--no .tile__grapheme { color: var(--muted); }
 
+/* Highlighted rule callout (rules first, exceptions clearly marked) */
+.rule {
+  max-width: 760px;
+  margin: 0 auto 1.5rem;
+  padding: 0.9rem 1.15rem;
+  background: rgba(61, 123, 253, 0.12);
+  border: 1px solid var(--accent-strong);
+  border-left: 4px solid var(--accent-strong);
+  border-radius: 10px;
+}
+.rule__tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.3rem;
+}
+.rule p { margin: 0; color: var(--muted); }
+.rule strong { color: var(--text); }
+.rule--exception {
+  background: rgba(255, 154, 154, 0.10);
+  border-color: #a85454;
+  border-left-color: #ff9a9a;
+}
+.rule--exception .rule__tag { color: #ff9a9a; }
+
 /* The two play buttons inside a combo tile */
 .tile__actions {
   display: flex;
